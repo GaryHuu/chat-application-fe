@@ -1,6 +1,6 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useUserStore } from './UserProvider'
+import { Navigate } from 'react-router-dom'
+import { useUserStore } from '../user/UserProvider'
 
 type Props = {
   children: React.ReactNode
@@ -8,11 +8,9 @@ type Props = {
 
 function PrivateRoute({ children }: Props) {
   const { user } = useUserStore()
-  const navigate = useNavigate()
 
   if (!user) {
-    navigate('/login')
-    return null
+    return <Navigate to='/login' />
   }
 
   return <>{children}</>

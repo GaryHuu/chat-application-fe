@@ -2,12 +2,12 @@ import { FriendOfUserType, GroupOfUseType } from 'domain/user'
 import {
   ParamsFetchFriendsType,
   PayloadLoginType,
-  ResponseLoginType,
+  Response0fLoginType,
 } from 'types/auth'
 import axiosClient from './axiosClient'
 
 const authApi = {
-  login(data: PayloadLoginType): Promise<ResponseLoginType> {
+  login(data: PayloadLoginType): Promise<Response0fLoginType> {
     const url = '/users/login'
     return axiosClient.post(url, data)
   },

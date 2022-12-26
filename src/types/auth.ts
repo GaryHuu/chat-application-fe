@@ -7,7 +7,7 @@ type ResponseFriendOfUserLoginType = {
   userId: string
 }
 
-export type ResponseLoginType = {
+export type Response0fLoginType = {
   id: string
   name: string
   avatarURL?: string

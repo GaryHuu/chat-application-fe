@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { API_ENDPOINT } from 'utils'
+import { API_ENDPOINT } from 'utils/constant'
 
 const axiosClient = axios.create({
   baseURL: API_ENDPOINT,

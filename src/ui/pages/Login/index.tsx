@@ -2,15 +2,14 @@ import LoadingButton from '@mui/lab/LoadingButton'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import { useUserStore } from 'app/UserProvider'
-import { useNavigate } from 'react-router-dom'
+import { useUserStore } from 'app/user/UserProvider'
+import { Navigate } from 'react-router-dom'
 
 import { useState } from 'react'
 
 function Login() {
   const [userId, setUserId] = useState('63a41b4142a7c568e84c6c0e')
   const { isLoadingUser, handleLogin, user } = useUserStore()
-  let navigate = useNavigate()
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserId(event.target.value)
@@ -20,10 +19,8 @@ function Login() {
     handleLogin(userId)
   }
 
-  console.log(user)
-
   if (user) {
-    navigate('/')
+    return <Navigate to='/' />
   }
 
   return (

@@ -8,6 +8,7 @@ export type FriendOfUserType = {
 export type GroupOfUseType = {
   id: string
   name: string
+  conversationId: string
   avatarURL?: string
   usersId: Array<string>
   users: Array<{
