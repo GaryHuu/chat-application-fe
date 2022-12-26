@@ -72,7 +72,8 @@ function useConversation(conversationId: string) {
         messageLongPollingControllerRef?.current
       )
 
-      if (!messageLongPollingControllerRef?.current?.signal.aborted) {
+      const isAborted = messageLongPollingControllerRef?.current?.signal.aborted
+      if (!isAborted) {
         setData((prev) => {
           return [...prev, response]
         })
@@ -80,7 +81,8 @@ function useConversation(conversationId: string) {
     } catch (error) {
       console.error(error)
     } finally {
-      if (!messageLongPollingControllerRef?.current?.signal.aborted) {
+      const isAborted = messageLongPollingControllerRef?.current?.signal.aborted
+      if (!isAborted) {
         getMessageLongPolling()
       }
     }
