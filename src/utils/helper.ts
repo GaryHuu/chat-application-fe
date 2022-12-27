@@ -1,20 +1,23 @@
-import { UserType } from 'domain/user'
+import { UserBasicInformationType } from 'types/auth'
 import { USER_STORAGE_KEY } from 'utils/constant'
 
-export const getUserFromLocalStorage = (): UserType | null => {
-  try {
-    const value = localStorage.getItem(USER_STORAGE_KEY)
-    if (value) {
-      return JSON.parse(value) as UserType
+export const getUserBasicInformationFromLocalStorage =
+  (): UserBasicInformationType | null => {
+    try {
+      const value = localStorage.getItem(USER_STORAGE_KEY)
+      if (value) {
+        return JSON.parse(value) as UserBasicInformationType
+      }
+      return null
+    } catch (error) {
+      console.error(error)
+      return null
     }
-    return null
-  } catch (error) {
-    console.error(error)
-    return null
   }
-}
 
-export const setUserLocalStorage = (value: UserType) => {
+export const setUserBasicInformationLocalStorage = (
+  value: UserBasicInformationType
+) => {
   try {
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(value))
   } catch (error) {
@@ -22,7 +25,7 @@ export const setUserLocalStorage = (value: UserType) => {
   }
 }
 
-export const clearUserLocalStorage = () => {
+export const clearUserBasicInformationLocalStorage = () => {
   localStorage.removeItem(USER_STORAGE_KEY)
 }
 

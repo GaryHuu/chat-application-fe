@@ -5,7 +5,7 @@ export type FriendOfUserType = {
   conversationId: string
 }
 
-export type GroupOfUseType = {
+export type GroupOfUserType = {
   id: string
   name: string
   conversationId: string
@@ -22,6 +22,6 @@ export type UserType = {
   id: string
   name: string
   avatarURL?: string
-  groups: Array<GroupOfUseType> | []
+  groups: Array<GroupOfUserType> | []
   friends: Array<FriendOfUserType> | []
 }

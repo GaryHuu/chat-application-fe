@@ -1,7 +1,13 @@
 import { useUserStore } from 'app/user/UserProvider'
 import { MessageType } from 'domain/message'
 import useBoolean from 'hooks/useBoolean'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import conversationApi from 'services/conversationApi'
 import {
   ParamsGetMessageLongPolling,
@@ -88,7 +94,7 @@ function useConversation(conversationId: string) {
     }
   }, [conversationId, user.id])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     scrollToBottomElement(MESSAGES_CONTAINER_ELEMENT_ID)
   }, [data])
 

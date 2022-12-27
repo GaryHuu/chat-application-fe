@@ -18,3 +18,9 @@ export type Response0fLoginType = {
 export type ParamsFetchFriendsType = {
   userId: string
 }
+
+export type UserBasicInformationType = {
+  id: string
+  name: string
+  avatarURL?: string
+}

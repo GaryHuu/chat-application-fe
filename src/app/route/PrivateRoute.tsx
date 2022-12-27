@@ -9,7 +9,7 @@ type Props = {
 function PrivateRoute({ children }: Props) {
   const { user } = useUserStore()
 
-  if (!user) {
+  if (!user?.id) {
     return <Navigate to='/login' />
   }
 

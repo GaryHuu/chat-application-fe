@@ -1,19 +1,19 @@
+import useFriendIndexedDB from 'app/user/useFriendIndexedDB'
 import { UserType } from 'domain/user'
 import useBoolean from 'hooks/useBoolean'
-import {
-  clearUserLocalStorage,
-  getUserFromLocalStorage,
-  setUserLocalStorage,
-} from 'utils/helper'
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 import authApi from 'services/authApi'
-import { ParamsFetchFriendsType, PayloadLoginType } from 'types/auth'
+import {
+  ParamsFetchFriendsType,
+  PayloadLoginType,
+  UserBasicInformationType,
+} from 'types/auth'
+import {
+  clearUserBasicInformationLocalStorage,
+  getUserBasicInformationFromLocalStorage,
+  setUserBasicInformationLocalStorage,
+} from 'utils/helper'
+import useGroupIndexedDB from 'app/user/useGroupIndexedDB'
 
 type UserProviderProps = {
   children: React.ReactNode
@@ -22,7 +22,7 @@ type UserProviderProps = {
 export type UserStoreType = {
   isLoadingUser: boolean
   user: UserType
-  updateUser: (fields: Partial<UserType>) => void
+  updateUserBasicInformation: (fields: Partial<UserType>) => void
   clearUserData: () => void
   handleLogin: (userId: string) => void
   handleLogout: () => void
@@ -33,14 +33,23 @@ const UserStoreContext = React.createContext<any>({})
 export const useUserStore = () => useContext<UserStoreType>(UserStoreContext)
 
 function UserProvider({ children }: UserProviderProps) {
-  const [user, setUser] = useState<UserType | null>(() => {
-    const newUser = getUserFromLocalStorage()
-    if (newUser) {
-      return newUser
-    }
+  const [userBasicInformation, setUserBasicInformation] =
+    useState<UserBasicInformationType | null>(() => {
+      const newUser = getUserBasicInformationFromLocalStorage()
+      if (newUser) {
+        return newUser
+      }
 
-    return null
-  })
+      return null
+    })
+
+  const {
+    addFriends: addFriendsToDB,
+    friends,
+    clearFriends,
+  } = useFriendIndexedDB()
+
+  const { groups, addGroups: addGroupsToDB, clearGroups } = useGroupIndexedDB()
 
   const {
     value: isLoading,
@@ -48,18 +57,16 @@ function UserProvider({ children }: UserProviderProps) {
     setTrue: startLoading,
   } = useBoolean(false)
 
-  const updateUser = useCallback((fields: Partial<UserType>) => {
-    setUser((prevUser) => {
-      const newUser = {
-        ...structuredClone(prevUser || {}),
-        ...structuredClone(fields),
-      }
-      return newUser as UserType
-    })
-  }, [])
+  const updateUserBasicInformation = useCallback(
+    (fields: UserBasicInformationType) => {
+      setUserBasicInformation(fields)
+      setUserBasicInformationLocalStorage(fields)
+    },
+    []
+  )
 
-  const clearUserData = useCallback(() => {
-    setUser(null)
+  const clearUserBasicInformation = useCallback(() => {
+    setUserBasicInformation(null)
   }, [])
 
   const fetchFriends = useCallback(
@@ -70,16 +77,14 @@ function UserProvider({ children }: UserProviderProps) {
           userId,
         }
         const response = await authApi.getFriends(params)
-        updateUser({
-          friends: response,
-        })
+        addFriendsToDB(response)
       } catch (error) {
         console.error(error)
       } finally {
         stopLoading()
       }
     },
-    [startLoading, stopLoading, updateUser]
+    [addFriendsToDB, startLoading, stopLoading]
   )
 
   const fetchGroups = useCallback(
@@ -90,16 +95,14 @@ function UserProvider({ children }: UserProviderProps) {
           userId,
         }
         const response = await authApi.getGroups(params)
-        updateUser({
-          groups: response,
-        })
+        addGroupsToDB(response)
       } catch (error) {
         console.error(error)
       } finally {
         stopLoading()
       }
     },
-    [startLoading, stopLoading, updateUser]
+    [addGroupsToDB, startLoading, stopLoading]
   )
 
   const handleLogin = useCallback(
@@ -111,7 +114,7 @@ function UserProvider({ children }: UserProviderProps) {
         }
         const response = await authApi.login(payload)
         const { id, name, avatarURL } = response
-        updateUser({ id, name, avatarURL })
+        updateUserBasicInformation({ id, name, avatarURL })
         await fetchFriends(id)
         await fetchGroups(id)
       } catch (error) {
@@ -120,40 +123,43 @@ function UserProvider({ children }: UserProviderProps) {
         stopLoading()
       }
     },
-    [fetchFriends, fetchGroups, startLoading, stopLoading, updateUser]
-  )
-
-  const handleLogout = useCallback(() => {
-    clearUserData()
-    clearUserLocalStorage()
-  }, [clearUserData])
-
-  const value = useMemo(
-    () => ({
-      isLoadingUser: isLoading,
-      user,
-      updateUser,
-      clearUserData,
-      handleLogin,
-      handleLogout,
-      fetchFriends,
-    }),
     [
-      clearUserData,
       fetchFriends,
-      handleLogin,
-      handleLogout,
-      isLoading,
-      updateUser,
-      user,
+      fetchGroups,
+      startLoading,
+      stopLoading,
+      updateUserBasicInformation,
     ]
   )
 
-  useEffect(() => {
-    if (user) {
-      setUserLocalStorage(user)
+  const handleLogout = useCallback(() => {
+    clearUserBasicInformation()
+    clearUserBasicInformationLocalStorage()
+    clearFriends()
+    clearGroups()
+  }, [clearFriends, clearGroups, clearUserBasicInformation])
+
+  const value = useMemo(() => {
+    const _user = {
+      ...userBasicInformation,
+      friends,
+      groups,
     }
-  }, [user])
+
+    return {
+      isLoadingUser: isLoading,
+      user: _user,
+      handleLogin,
+      handleLogout,
+    }
+  }, [
+    friends,
+    groups,
+    handleLogin,
+    handleLogout,
+    isLoading,
+    userBasicInformation,
+  ])
 
   return (
     <UserStoreContext.Provider value={value}>

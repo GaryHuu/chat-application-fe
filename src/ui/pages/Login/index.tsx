@@ -19,7 +19,7 @@ function Login() {
     handleLogin(userId)
   }
 
-  if (user) {
+  if (user?.id) {
     return <Navigate to='/' />
   }
 
