@@ -1,8 +1,8 @@
 import PrivateRoute from 'app/route/PrivateRoute'
 import { lazy } from 'react'
 import { RouteObject } from 'react-router-dom'
-import MainLayout from 'ui/components/MainLayout'
 
+const MainLayout = lazy(() => import('ui/components/MainLayout'))
 const LoginPage = lazy(() => import('ui/pages/Login'))
 const FriendsPage = lazy(() => import('ui/pages/Friends'))
 const ConversationPage = lazy(() => import('ui/pages/Conversation'))
