@@ -48,26 +48,6 @@ function useConversation(conversationId: string) {
     [conversationId, startLoading, stopLoading]
   )
 
-  const sentNewMessage = useCallback(
-    async (content: string) => {
-      try {
-        if (!conversationId || !content || isLoading) throw new Error()
-        const payload: PayloadSendNewMessageType = {
-          content,
-          conversationId,
-          fromUserId: user.id,
-        }
-        const response = await conversationApi.sendNewMessage(payload)
-        setData((prev) => {
-          return [...prev, response]
-        })
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    [conversationId, isLoading, user.id]
-  )
-
   const addMessagesToDB = useCallback(
     (messages: Array<MessageType>) => {
       if (!dbRef.current) {
@@ -92,6 +72,27 @@ function useConversation(conversationId: string) {
       transaction.oncomplete = () => {}
     },
     [conversationId]
+  )
+
+  const sentNewMessage = useCallback(
+    async (content: string) => {
+      try {
+        if (!conversationId || !content || isLoading) throw new Error()
+        const payload: PayloadSendNewMessageType = {
+          content,
+          conversationId,
+          fromUserId: user.id,
+        }
+        const response = await conversationApi.sendNewMessage(payload)
+        setData((prev) => {
+          return [...prev, response]
+        })
+        addMessagesToDB([response])
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    [addMessagesToDB, conversationId, isLoading, user.id]
   )
 
   const getMessageLongPolling = useCallback(async () => {
