@@ -4,7 +4,20 @@ import { USER_FRIEND_DB_NAME } from 'utils/constant'
 
 const FRIEND_OBJECT_STORE_NAME = 'friends'
 
-function useFriendIndexedDB() {
+type ReturnType = {
+  friends: [] | FriendOfUserType[]
+  addFriend: (friend: FriendOfUserType) => void
+  addFriends: (friends: Array<FriendOfUserType>) => void
+  getFriend: (key: string) => Promise<FriendOfUserType>
+  removeFriend: (key: string) => void
+  clearFriends: () => void
+  updateFriend: (
+    key: string,
+    newFriend: Partial<Omit<FriendOfUserType, 'id' | 'conversationId'>>
+  ) => Promise<FriendOfUserType>
+}
+
+function useFriendIndexedDB(): ReturnType {
   const dbRef = useRef<IDBDatabase>()
   const [friends, setFriends] = useState<Array<FriendOfUserType> | []>([])
 

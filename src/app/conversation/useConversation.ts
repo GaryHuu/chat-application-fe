@@ -18,7 +18,13 @@ import { MESSAGES_CONTAINER_ELEMENT_ID } from 'ui/components/Conversation/Messag
 import { CONVERSATION_DB_NAME } from 'utils/constant'
 import { scrollToBottomElement } from 'utils/helper'
 
-function useConversation(conversationId: string) {
+type ReturnType = {
+  isLoading: boolean
+  data: [] | MessageType[]
+  sentNewMessage: (content: string) => Promise<void>
+}
+
+function useConversation(conversationId: string): ReturnType {
   const {
     value: isLoading,
     setTrue: startLoading,

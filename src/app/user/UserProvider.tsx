@@ -140,7 +140,7 @@ function UserProvider({ children }: UserProviderProps) {
   }, [clearFriends, clearGroups, clearUserBasicInformation])
 
   const value = useMemo(() => {
-    const _user = {
+    const user = {
       ...userBasicInformation,
       friends,
       groups,
@@ -148,7 +148,7 @@ function UserProvider({ children }: UserProviderProps) {
 
     return {
       isLoadingUser: isLoading,
-      user: _user,
+      user,
       handleLogin,
       handleLogout,
     }

@@ -4,7 +4,20 @@ import { USER_GROUPS_DB_NAME } from 'utils/constant'
 
 const GROUP_OBJECT_STORE_NAME = 'groups'
 
-function useGroupIndexedDB() {
+type ReturnType = {
+  groups: [] | GroupOfUserType[]
+  addGroup: (group: GroupOfUserType) => void
+  addGroups: (groups: Array<GroupOfUserType>) => void
+  getGroup: (key: string) => Promise<GroupOfUserType>
+  removeGroup: (key: string) => void
+  clearGroups: () => void
+  updateGroup: (
+    key: string,
+    newGroup: Partial<Omit<GroupOfUserType, 'id' | 'conversationId'>>
+  ) => Promise<GroupOfUserType>
+}
+
+function useGroupIndexedDB(): ReturnType {
   const dbRef = useRef<IDBDatabase>()
   const [groups, setGroups] = useState<Array<GroupOfUserType> | []>([])
 
