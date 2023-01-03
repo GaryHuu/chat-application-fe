@@ -9,7 +9,11 @@ import axiosClient from './axiosClient'
 const conversationApi = {
   getById(data: ParamsGetConversationByIdType): Promise<Array<MessageType>> {
     const url = `/conversations/${data.conversationId}`
-    return axiosClient.get(url)
+    return axiosClient.get(url, {
+      params: { 
+        lastMessageId: data?.lastMessageId || null,
+      },
+    })
   },
   sendNewMessage({
     content,

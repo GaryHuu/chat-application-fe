@@ -11,10 +11,16 @@ export type Response0fLoginType = {
   id: string
   name: string
   avatarURL?: string
-  groups: Array<string> | []
+  groups: Array<string> | []  
   friends: Array<ResponseFriendOfUserLoginType> | []
 }
 
 export type ParamsFetchFriendsType = {
   userId: string
+}
+
+export type UserBasicInformationType = {
+  id: string
+  name: string
+  avatarURL?: string
 }

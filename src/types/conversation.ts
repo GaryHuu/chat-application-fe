@@ -1,5 +1,6 @@
 export type ParamsGetConversationByIdType = {
   conversationId: string
+  lastMessageId?: string
 }
 
 export type PayloadSendNewMessageType = {

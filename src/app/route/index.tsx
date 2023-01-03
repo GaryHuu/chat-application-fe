@@ -1,16 +1,18 @@
 import PrivateRoute from 'app/route/PrivateRoute'
+import { lazy } from 'react'
 import { RouteObject } from 'react-router-dom'
-import Login from 'ui/pages/Login'
-import MainLayout from 'ui/components/MainLayout'
-import Friends from 'ui/pages/Friends'
-import User from 'ui/pages/User'
-import Groups from 'ui/pages/Groups'
-import Conversation from 'ui/pages/Conversation'
+
+const MainLayout = lazy(() => import('ui/components/MainLayout'))
+const LoginPage = lazy(() => import('ui/pages/Login'))
+const FriendsPage = lazy(() => import('ui/pages/Friends'))
+const ConversationPage = lazy(() => import('ui/pages/Conversation'))
+const GroupsPage = lazy(() => import('ui/pages/Groups'))
+const UserPage = lazy(() => import('ui/pages/User'))
 
 export const routes: RouteObject[] = [
   {
     path: '/login',
-    element: <Login />,
+    element: <LoginPage />,
   },
   {
     path: '/',
@@ -22,19 +24,19 @@ export const routes: RouteObject[] = [
     children: [
       {
         path: '/',
-        element: <Friends />,
+        element: <FriendsPage />,
       },
       {
         path: '/conversation/:id',
-        element: <Conversation />,
+        element: <ConversationPage />,
       },
       {
         path: '/groups',
-        element: <Groups />,
+        element: <GroupsPage />,
       },
       {
         path: '/user',
-        element: <User />,
+        element: <UserPage />,
       },
     ],
   },

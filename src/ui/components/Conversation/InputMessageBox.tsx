@@ -52,8 +52,12 @@ function InputMessageBox({ onSent }: Props) {
         minRows={2}
         maxRows={3}
         value={value}
-        onFocus={() => (focusedRef.current = true)}
-        onBlur={() => (focusedRef.current = false)}
+        onFocus={() => {
+          focusedRef.current = true
+        }}
+        onBlur={() => {
+          focusedRef.current = false
+        }}
         onChange={handleChange}
       />
       <IconButton

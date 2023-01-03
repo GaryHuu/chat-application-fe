@@ -1,4 +1,4 @@
-import { FriendOfUserType, GroupOfUseType } from 'domain/user'
+import { FriendOfUserType, GroupOfUserType } from 'domain/user'
 import {
   ParamsFetchFriendsType,
   PayloadLoginType,
@@ -15,7 +15,7 @@ const authApi = {
     const url = `/users/${data.userId}/friends`
     return axiosClient.get(url)
   },
-  getGroups(data: ParamsFetchFriendsType): Promise<Array<GroupOfUseType>> {
+  getGroups(data: ParamsFetchFriendsType): Promise<Array<GroupOfUserType>> {
     const url = `/users/${data.userId}/groups`
     return axiosClient.get(url)
   },
