@@ -6,7 +6,7 @@ const authAdapter = {
   login(data: PayloadLoginType): Promise<User> {
     const url = '/users/login'
     return axiosClient.post(url, data)
-  },
+  }
 }
 
 export default authAdapter

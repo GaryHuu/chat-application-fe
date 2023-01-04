@@ -8,7 +8,7 @@ function useAuthenticate() {
   const handleLogin = async (userId: UniqueId) => {
     try {
       const payload = {
-        userId,
+        userId
       }
       const { id, name, avatarURL } = await authApi.login(payload)
       updateUser({ id, name, avatarURL })
@@ -25,7 +25,7 @@ function useAuthenticate() {
   return {
     user,
     handleLogin,
-    handleLogout,
+    handleLogout
   }
 }
 

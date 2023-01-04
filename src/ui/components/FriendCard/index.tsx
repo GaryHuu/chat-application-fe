@@ -12,7 +12,7 @@ function FriendCard({ name, avatarURL }: Props) {
   return (
     <Box sx={styles.wrapper}>
       <Avatar alt={name} src={avatarURL} sx={styles.avatar} />
-      <Typography sx={styles.name} variant='h6'>
+      <Typography sx={styles.name} variant="h6">
         {name}
       </Typography>
     </Box>

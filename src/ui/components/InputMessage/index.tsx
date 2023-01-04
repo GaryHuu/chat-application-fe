@@ -40,7 +40,7 @@ function InputMessage({ onSent }: Props) {
     <Box sx={styles.wrapper}>
       <InputBase
         sx={styles.input}
-        placeholder='Enter your message'
+        placeholder="Enter your message"
         multiline
         minRows={2}
         maxRows={3}
@@ -53,13 +53,8 @@ function InputMessage({ onSent }: Props) {
         }}
         onChange={handleChange}
       />
-      <IconButton
-        sx={styles.icon}
-        aria-label='send'
-        size='large'
-        onClick={handleSubmit}
-      >
-        <SendIcon fontSize='inherit' />
+      <IconButton sx={styles.icon} aria-label="send" size="large" onClick={handleSubmit}>
+        <SendIcon fontSize="inherit" />
       </IconButton>
     </Box>
   )

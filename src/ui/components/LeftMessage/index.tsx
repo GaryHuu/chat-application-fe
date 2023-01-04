@@ -20,9 +20,7 @@ function LeftMessage({ name, avatarURL, content, createdAt }: Props) {
         <Box sx={styles.content}>
           <Box sx={styles.triangle} />
           {content}
-          <Typography sx={styles.time}>
-            {createdAt ? formatTime(createdAt) : null}
-          </Typography>
+          <Typography sx={styles.time}>{createdAt ? formatTime(createdAt) : null}</Typography>
         </Box>
       </Box>
     </Box>

@@ -27,25 +27,20 @@ function LoginComponent({ handleLogin, user }: Props) {
   }
 
   if (checkIsLogged(user)) {
-    return <Navigate to='/' />
+    return <Navigate to="/" />
   }
 
   return (
     <Box p={10} sx={styles.wrapper}>
       <Typography sx={styles.title}>Login</Typography>
       <TextField
-        label='User ID'
-        variant='outlined'
+        label="User ID"
+        variant="outlined"
         value={userId}
         onChange={handleChange}
         sx={styles.input}
       />
-      <LoadingButton
-        disabled={!userId}
-        onClick={onSubmit}
-        size='medium'
-        variant='contained'
-      >
+      <LoadingButton disabled={!userId} onClick={onSubmit} size="medium" variant="contained">
         Submit
       </LoadingButton>
     </Box>

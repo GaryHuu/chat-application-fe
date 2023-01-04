@@ -1,8 +1,8 @@
-import { UserName } from "./user"
+import { UserName } from './user'
 
 export type Friend = {
   id: UniqueId
-  name: UserName 
+  name: UserName
   avatarURL?: URLString
   conversationId: UniqueId
 }

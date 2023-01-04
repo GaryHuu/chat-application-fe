@@ -14,22 +14,22 @@ const styles: Styles = {
     marginTop: '20vh',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   avatar: {
     width: 100,
     height: 100,
-    border: '1px solid #d3d3d3',
+    border: '1px solid #d3d3d3'
   },
   name: {
     marginTop: '10px',
-    color: '#424242',
+    color: '#424242'
   },
   wrapperIcon: {
     width: '200px',
     display: 'flex',
-    justifyContent: 'center',
-  },
+    justifyContent: 'center'
+  }
 }
 
 export default styles

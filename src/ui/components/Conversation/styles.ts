@@ -9,13 +9,13 @@ const styles: Styles = {
   wrapper: {
     height: '100%',
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   box: {
     padding: '5px 10px',
     flex: 1,
-    overflowY: 'auto',
-  },
+    overflowY: 'auto'
+  }
 }
 
 export default styles

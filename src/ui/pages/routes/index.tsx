@@ -12,7 +12,7 @@ const ConversationPage = lazy(() => import('ui/pages/Conversation'))
 export const routes: RouteObject[] = [
   {
     path: '/login',
-    element: <LoginPage />,
+    element: <LoginPage />
   },
   {
     path: '/',
@@ -24,20 +24,20 @@ export const routes: RouteObject[] = [
     children: [
       {
         path: '/',
-        element: <FriendsPage />,
+        element: <FriendsPage />
       },
       {
         path: '/groups',
-        element: <GroupsPage />,
+        element: <GroupsPage />
       },
       {
         path: '/user',
-        element: <UserPage />,
+        element: <UserPage />
       },
       {
         path: '/conversation/:id',
-        element: <ConversationPage />,
-      },
-    ],
-  },
+        element: <ConversationPage />
+      }
+    ]
+  }
 ]

@@ -1,8 +1,4 @@
-import {
-  ParamsGetConversationType,
-  ParamsGetMessage,
-  PayloadSendMessageType,
-} from 'app/ports'
+import { ParamsGetConversationType, ParamsGetMessage, PayloadSendMessageType } from 'app/ports'
 import useAuthenticate from 'app/useAuthenticate'
 import { ContentMessage, Message } from 'domain/message'
 import { useEffect, useRef, useState } from 'react'
@@ -14,15 +10,14 @@ function useConversation(conversationId: UniqueId) {
   const getMessageRef = useRef<AbortController>()
 
   const { user } = useAuthenticate()
-  const { initConversationDB, addMessagesToDB } =
-    useConversationDB(conversationId)
+  const { initConversationDB, addMessagesToDB } = useConversationDB(conversationId)
 
   const sentMessage = async (content: ContentMessage) => {
     try {
       const payload: PayloadSendMessageType = {
         content,
         conversationId,
-        fromUserId: user.id,
+        fromUserId: user.id
       }
       const newMessage = await conversationApi.sendNewMessage(payload)
       setData((prev) => {
@@ -39,12 +34,9 @@ function useConversation(conversationId: UniqueId) {
       getMessageRef.current = new AbortController()
       const params: ParamsGetMessage = {
         conversationId,
-        useId: user.id,
+        useId: user.id
       }
-      const response = await conversationApi.getNewMessage(
-        params,
-        getMessageRef?.current
-      )
+      const response = await conversationApi.getNewMessage(params, getMessageRef?.current)
 
       const isAborted = getMessageRef?.current?.signal.aborted
       if (!isAborted) {
@@ -68,7 +60,7 @@ function useConversation(conversationId: UniqueId) {
       const { messages: messagesDB, lastMessageId } = await initConversationDB()
       const params: ParamsGetConversationType = {
         conversationId,
-        lastMessageId,
+        lastMessageId
       }
       const newMessage = await conversationApi.getById(params)
       addMessagesToDB(newMessage)
@@ -96,7 +88,7 @@ function useConversation(conversationId: UniqueId) {
 
   return {
     data,
-    sentMessage,
+    sentMessage
   }
 }
 

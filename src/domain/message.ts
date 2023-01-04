@@ -20,10 +20,7 @@ export function checkIsOwnerMessage(user: User, message: Message): boolean {
   return user.id === message.fromUserId
 }
 
-export function createNewMessage(
-  user: User,
-  content: ContentMessage
-): Omit<Message, 'id'> {
+export function createNewMessage(user: User, content: ContentMessage): Omit<Message, 'id'> {
   const newMessage = {
     fromUserId: user.id,
     content,
@@ -32,8 +29,8 @@ export function createNewMessage(
     user: {
       name: user.name,
       id: user.id,
-      avatarURL: user?.avatarURL,
-    },
+      avatarURL: user?.avatarURL
+    }
   }
   return newMessage
 }

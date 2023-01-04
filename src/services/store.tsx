@@ -55,7 +55,7 @@ function Provider({ children }: { children: JSX.Element }) {
     emptyFriends,
     groups,
     updateGroups,
-    emptyGroups,
+    emptyGroups
   }
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>

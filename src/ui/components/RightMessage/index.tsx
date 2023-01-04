@@ -12,13 +12,7 @@ type Props = {
   isOwner?: boolean
 }
 
-function RightMessage({
-  name,
-  avatarURL,
-  content,
-  createdAt,
-  isOwner = true,
-}: Props) {
+function RightMessage({ name, avatarURL, content, createdAt, isOwner = true }: Props) {
   return (
     <Box sx={styles.wrapper}>
       <Box sx={styles.left}>
@@ -26,9 +20,7 @@ function RightMessage({
         <Box sx={styles.content}>
           <Box sx={styles.triangle} />
           {content}
-          <Typography sx={styles.time}>
-            {createdAt ? formatTime(createdAt) : null}
-          </Typography>
+          <Typography sx={styles.time}>{createdAt ? formatTime(createdAt) : null}</Typography>
         </Box>
       </Box>
       <Avatar alt={name} src={avatarURL} sx={styles.avatar} />

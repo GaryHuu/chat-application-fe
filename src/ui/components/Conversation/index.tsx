@@ -34,7 +34,7 @@ function ConversationComponent({ conversationId }: Props) {
         id,
         content,
         createdAt,
-        user: { name, avatarURL },
+        user: { name, avatarURL }
       } = message
       return (
         <Message
@@ -55,7 +55,7 @@ function ConversationComponent({ conversationId }: Props) {
 
   return (
     <Box sx={styles.wrapper}>
-      <Box component='div' id={MESSAGES_CONTAINER_ELEMENT_ID} sx={styles.box}>
+      <Box component="div" id={MESSAGES_CONTAINER_ELEMENT_ID} sx={styles.box}>
         {data && data?.length > 0 ? renderMessages() : null}
       </Box>
       <InputMessage onSent={handleSentMessage} />

@@ -12,16 +12,16 @@ const styles: Styles = {
     flexDirection: 'column',
     alignItems: 'center',
     paddingTop: '20vh',
-    height: '100vh',
+    height: '100vh'
   },
   title: {
     fontSize: 30,
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   input: {
     margin: '30px 0 16px',
-    width: '300px',
-  },
+    width: '300px'
+  }
 }
 
 export default styles

@@ -10,7 +10,7 @@ function PrivateRoute({ children }: Props) {
   const { user } = useUserStorage()
 
   if (!user?.id) {
-    return <Navigate to='/login' />
+    return <Navigate to="/login" />
   }
 
   return <>{children}</>

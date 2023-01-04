@@ -4,8 +4,8 @@ import { API_ENDPOINT } from 'utils/constants'
 const axiosClient = axios.create({
   baseURL: API_ENDPOINT,
   headers: {
-    'Content-Type': 'application/json',
-  },
+    'Content-Type': 'application/json'
+  }
 })
 
 // Add a request interceptor

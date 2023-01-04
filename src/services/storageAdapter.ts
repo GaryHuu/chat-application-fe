@@ -1,8 +1,4 @@
-import {
-  FriendsStorageService,
-  GroupsStorageService,
-  UserStorageService,
-} from 'app/ports'
+import { FriendsStorageService, GroupsStorageService, UserStorageService } from 'app/ports'
 import { useStore } from './store'
 
 export function useUserStorage(): UserStorageService {

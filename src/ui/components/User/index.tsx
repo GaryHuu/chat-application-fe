@@ -16,12 +16,12 @@ function UserComponent({ user, handleLogout }: Props) {
   return (
     <Box sx={styles.wrapper}>
       <Avatar src={user?.avatarURL} alt={user.name} sx={styles.avatar} />
-      <Typography sx={styles.name} variant='h4'>
+      <Typography sx={styles.name} variant="h4">
         {user.name}
       </Typography>
       <Box sx={styles.wrapperIcon}>
-        <IconButton onClick={handleLogout} aria-label='delete' size='large'>
-          <LogoutIcon fontSize='inherit' />
+        <IconButton onClick={handleLogout} aria-label="delete" size="large">
+          <LogoutIcon fontSize="inherit" />
         </IconButton>
       </Box>
     </Box>

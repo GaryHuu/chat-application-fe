@@ -72,7 +72,7 @@ function useConversationDB(conversationId: UniqueId) {
       request.onupgradeneeded = (event: any) => {
         dbRef.current = event?.target?.result as IDBDatabase
         const objectStore = dbRef.current.createObjectStore(conversationId, {
-          keyPath: 'id',
+          keyPath: 'id'
         })
         objectStore.createIndex('id', 'id', { unique: true })
       }
@@ -91,7 +91,7 @@ function useConversationDB(conversationId: UniqueId) {
 
   return {
     initConversationDB,
-    addMessagesToDB,
+    addMessagesToDB
   }
 }
 

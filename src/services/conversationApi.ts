@@ -1,32 +1,25 @@
-import {
-  ParamsGetConversationType,
-  ParamsGetMessage,
-  PayloadSendMessageType,
-} from 'app/ports'
+import { ParamsGetConversationType, ParamsGetMessage, PayloadSendMessageType } from 'app/ports'
 import { Message } from 'domain/message'
 import axiosClient from './axiosClient'
 
 const conversationApi = {
-  getById({
-    conversationId,
-    lastMessageId,
-  }: ParamsGetConversationType): Promise<Message[]> {
+  getById({ conversationId, lastMessageId }: ParamsGetConversationType): Promise<Message[]> {
     const url = `/conversations/${conversationId}`
     return axiosClient.get(url, {
       params: {
-        lastMessageId: lastMessageId || null,
-      },
+        lastMessageId: lastMessageId || null
+      }
     })
   },
   sendNewMessage({
     content,
     conversationId,
-    fromUserId,
+    fromUserId
   }: PayloadSendMessageType): Promise<Message> {
     const url = `/conversations/${conversationId}`
     const payload = {
       content,
-      fromUserId,
+      fromUserId
     }
     return axiosClient.post(url, payload)
   },
@@ -36,13 +29,13 @@ const conversationApi = {
   ): Promise<Message> {
     const url = `/conversations/${conversationId}/message`
     const params = {
-      useId,
+      useId
     }
     return axiosClient.get(url, {
       params,
-      signal: controller?.signal || undefined,
+      signal: controller?.signal || undefined
     })
-  },
+  }
 }
 
 export default conversationApi

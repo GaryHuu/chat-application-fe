@@ -10,7 +10,7 @@ const userApi = {
   getGroups(userId: UniqueId): Promise<Group[]> {
     const url = `/users/${userId}/groups`
     return axiosClient.get(url)
-  },
+  }
 }
 
 export default userApi

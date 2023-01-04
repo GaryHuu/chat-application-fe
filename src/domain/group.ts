@@ -1,4 +1,4 @@
-import { UserName } from "./user"
+import { UserName } from './user'
 
 export type GroupName = string
 
@@ -9,7 +9,7 @@ export type Group = {
   avatarURL?: URLString
   users: Array<{
     id: UniqueId
-    name: UserName     
-		avatarURL?: URLString
+    name: UserName
+    avatarURL?: URLString
   }>
 }

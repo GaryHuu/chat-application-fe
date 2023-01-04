@@ -11,28 +11,25 @@ const BOTTOM_NAVIGATION_ACTION = [
   {
     value: '/',
     label: 'Friends',
-    icon: <ContactsIcon />,
+    icon: <ContactsIcon />
   },
   {
     value: '/groups',
     label: 'Groups',
-    icon: <Groups2SharpIcon />,
+    icon: <Groups2SharpIcon />
   },
   {
     value: '/user',
     label: 'User',
-    icon: <AccountCircleSharpIcon />,
-  },
+    icon: <AccountCircleSharpIcon />
+  }
 ]
 
 function MainLayout() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
 
-  const handleChange = (
-    _event: React.SyntheticEvent<Element, Event>,
-    value: string
-  ) => {
+  const handleChange = (_event: React.SyntheticEvent<Element, Event>, value: string) => {
     navigate(value)
   }
 
