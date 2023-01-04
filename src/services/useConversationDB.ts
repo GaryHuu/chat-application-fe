@@ -26,6 +26,10 @@ function useConversationDB(conversationId: UniqueId) {
     transaction.oncomplete = () => {}
   }
 
+  const addMessageToDB = (message: Message) => {
+    addMessagesToDB([message])
+  }
+
   const getMessagesDB = () => {
     return new Promise<{
       messages: Message[]
@@ -91,7 +95,8 @@ function useConversationDB(conversationId: UniqueId) {
 
   return {
     initConversationDB,
-    addMessagesToDB
+    addMessagesToDB,
+    addMessageToDB
   }
 }
 

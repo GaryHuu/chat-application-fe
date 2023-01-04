@@ -10,7 +10,7 @@ function useConversation(conversationId: UniqueId) {
   const getMessageRef = useRef<AbortController>()
 
   const { user } = useAuthenticate()
-  const { initConversationDB, addMessagesToDB } = useConversationDB(conversationId)
+  const { initConversationDB, addMessagesToDB, addMessageToDB } = useConversationDB(conversationId)
 
   const sentMessage = async (content: ContentMessage) => {
     try {
@@ -23,7 +23,7 @@ function useConversation(conversationId: UniqueId) {
       setData((prev) => {
         return [...prev, newMessage]
       })
-      addMessagesToDB([newMessage])
+      addMessageToDB(newMessage)
     } catch (error) {
       console.error(error)
     }
@@ -43,7 +43,7 @@ function useConversation(conversationId: UniqueId) {
         setData((prev) => {
           return [...prev, response]
         })
-        addMessagesToDB([response])
+        addMessageToDB(response)
       }
     } catch (error) {
       console.error(error)
