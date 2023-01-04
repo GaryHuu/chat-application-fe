@@ -1,43 +1,65 @@
 import Box from '@mui/material/Box'
-import useConversation from 'app/conversation/useConversation'
-import InputMessageBox from 'ui/components/Conversation/InputMessageBox'
-import Messages, {
-  MESSAGES_CONTAINER_ELEMENT_ID,
-} from 'ui/components/Conversation/Messages'
+import useAuthenticate from 'app/useAuthenticate'
+import useConversation from 'app/useConversation'
+import { ContentMessage } from 'domain/message'
+import { useLayoutEffect } from 'react'
+import InputMessage from 'ui/components/InputMessage'
+import Message from 'ui/components/Message'
+import styles from './styles'
 
-type Props = {
-  conversationId: string
+const scrollToBottomElement = (id: string) => {
+  const element = document.getElementById(id)
+  if (element) {
+    element.scrollTop = element.scrollHeight
+  }
 }
 
-function ConversationComponent({ conversationId }: Props) {
-  const { data, sentNewMessage } = useConversation(conversationId)
+type Props = {
+  conversationId: UniqueId
+}
 
-  const handleSentMessage = (value: string) => {
-    if (value) {
-      sentNewMessage(value)
-    }
+const MESSAGES_CONTAINER_ELEMENT_ID = 'messages_container_element_id'
+
+function ConversationComponent({ conversationId }: Props) {
+  const { data, sentMessage } = useConversation(conversationId)
+  const { user } = useAuthenticate()
+
+  const handleSentMessage = (value: ContentMessage) => {
+    sentMessage(value)
   }
 
+  const renderMessages = () => {
+    return data?.map((message) => {
+      const {
+        id,
+        content,
+        createdAt,
+        fromUserId,
+        user: { name, avatarURL },
+      } = message
+      return (
+        <Message
+          key={id}
+          isOwner={fromUserId === user.id}
+          name={name}
+          content={content}
+          avatarURL={avatarURL}
+          createdAt={createdAt}
+        />
+      )
+    })
+  }
+
+  useLayoutEffect(() => {
+    scrollToBottomElement(MESSAGES_CONTAINER_ELEMENT_ID)
+  }, [data])
+
   return (
-    <Box
-      sx={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <Box
-        component='div'
-        id={MESSAGES_CONTAINER_ELEMENT_ID}
-        sx={{
-          padding: '5px 10px',
-          flex: 1,
-          overflowY: 'auto',
-        }}
-      >
-        <Messages conversationData={data} />
+    <Box sx={styles.wrapper}>
+      <Box component='div' id={MESSAGES_CONTAINER_ELEMENT_ID} sx={styles.box}>
+        {data && data?.length > 0 ? renderMessages() : null}
       </Box>
-      <InputMessageBox onSent={handleSentMessage} />
+      <InputMessage onSent={handleSentMessage} />
     </Box>
   )
 }

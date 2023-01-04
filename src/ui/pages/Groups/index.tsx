@@ -1,23 +1,9 @@
-import Box from '@mui/material/Box'
-import { useUserStore } from 'app/user/UserProvider'
-import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import GroupCard from 'ui/components/GroupCard'
+import useGroups from 'app/useGroups'
+import GroupsComponent from 'ui/components/Groups'
 
-function Groups() {
-  const { user } = useUserStore()
-
-  const groups = useMemo(() => user?.groups || [], [user])
-
-  const renderGroups = () => {
-    return groups.map((group) => (
-      <Link key={group.id} to={`/conversation/${group.conversationId}`}>
-        <GroupCard {...group} />
-      </Link>
-    ))
-  }
-
-  return <Box>{groups.length > 0 ? renderGroups() : null}</Box>
+function GroupsPage() {
+  const { groups } = useGroups()
+  return <GroupsComponent groups={groups} />
 }
 
-export default Groups
+export default GroupsPage

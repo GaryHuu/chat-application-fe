@@ -2,14 +2,16 @@ import SendIcon from '@mui/icons-material/Send'
 import { InputBase } from '@mui/material'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
+import { ContentMessage } from 'domain/message'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import styles from './styles'
 
 type Props = {
-  onSent: (value: string) => void
+  onSent: (value: ContentMessage) => void
 }
 
-function InputMessageBox({ onSent }: Props) {
-  const [value, setValue] = useState('')
+function InputMessage({ onSent }: Props) {
+  const [value, setValue] = useState<ContentMessage>('')
   const focusedRef = useRef(false)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,8 +19,10 @@ function InputMessageBox({ onSent }: Props) {
   }
 
   const handleSubmit = useCallback(() => {
-    onSent(value)
-    setValue('')
+    if (value) {
+      onSent(value)
+      setValue('')
+    }
   }, [onSent, value])
 
   useEffect(() => {
@@ -33,20 +37,9 @@ function InputMessageBox({ onSent }: Props) {
   }, [handleSubmit])
 
   return (
-    <Box
-      sx={{
-        height: '70px',
-        display: 'flex',
-        backgroundColor: '#FFF',
-        boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px',
-        borderTop: '1px solid #CCC',
-      }}
-    >
+    <Box sx={styles.wrapper}>
       <InputBase
-        sx={{
-          flex: 1,
-          padding: '10px',
-        }}
+        sx={styles.input}
         placeholder='Enter your message'
         multiline
         minRows={2}
@@ -61,9 +54,7 @@ function InputMessageBox({ onSent }: Props) {
         onChange={handleChange}
       />
       <IconButton
-        sx={{
-          height: '52px',
-        }}
+        sx={styles.icon}
         aria-label='send'
         size='large'
         onClick={handleSubmit}
@@ -74,4 +65,4 @@ function InputMessageBox({ onSent }: Props) {
   )
 }
 
-export default InputMessageBox
+export default InputMessage
