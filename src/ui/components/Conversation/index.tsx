@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import useAuthenticate from 'app/useAuthenticate'
 import useConversation from 'app/useConversation'
-import { ContentMessage } from 'domain/message'
+import { checkIsOwnerMessage, ContentMessage } from 'domain/message'
 import { useLayoutEffect } from 'react'
 import InputMessage from 'ui/components/InputMessage'
 import Message from 'ui/components/Message'
@@ -34,13 +34,12 @@ function ConversationComponent({ conversationId }: Props) {
         id,
         content,
         createdAt,
-        fromUserId,
         user: { name, avatarURL },
       } = message
       return (
         <Message
           key={id}
-          isOwner={fromUserId === user.id}
+          isOwner={checkIsOwnerMessage(user, message)}
           name={name}
           content={content}
           avatarURL={avatarURL}
