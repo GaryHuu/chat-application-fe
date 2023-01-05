@@ -1,45 +1,41 @@
-import { MessageType } from 'domain/message'
-import {
-  ParamsGetConversationByIdType,
-  ParamsGetMessageLongPolling,
-  PayloadSendNewMessageType,
-} from 'types/conversation'
+import { ParamsGetConversationType, ParamsGetMessage, PayloadSendMessageType } from 'app/ports'
+import { Message } from 'domain/message'
 import axiosClient from './axiosClient'
 
 const conversationApi = {
-  getById(data: ParamsGetConversationByIdType): Promise<Array<MessageType>> {
-    const url = `/conversations/${data.conversationId}`
+  getById({ conversationId, lastMessageId }: ParamsGetConversationType): Promise<Message[]> {
+    const url = `/conversations/${conversationId}`
     return axiosClient.get(url, {
-      params: { 
-        lastMessageId: data?.lastMessageId || null,
-      },
+      params: {
+        lastMessageId: lastMessageId || null
+      }
     })
   },
   sendNewMessage({
     content,
     conversationId,
-    fromUserId,
-  }: PayloadSendNewMessageType): Promise<MessageType> {
+    fromUserId
+  }: PayloadSendMessageType): Promise<Message> {
     const url = `/conversations/${conversationId}`
     const payload = {
       content,
-      fromUserId,
+      fromUserId
     }
     return axiosClient.post(url, payload)
   },
-  getNewMessageLongPolling(
-    { conversationId, useId }: ParamsGetMessageLongPolling,
+  getNewMessage(
+    { conversationId, useId }: ParamsGetMessage,
     controller?: AbortController
-  ): Promise<MessageType> {
+  ): Promise<Message> {
     const url = `/conversations/${conversationId}/message`
     const params = {
-      useId,
+      useId
     }
     return axiosClient.get(url, {
       params,
-      signal: controller?.signal || undefined,
+      signal: controller?.signal || undefined
     })
-  },
+  }
 }
 
 export default conversationApi

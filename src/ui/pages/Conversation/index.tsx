@@ -1,15 +1,14 @@
-import { Fragment } from 'react'
 import { useParams } from 'react-router-dom'
 import ConversationComponent from 'ui/components/Conversation'
 
-function Conversation() {
+function ConversationPage() {
   const { id } = useParams()
 
-  return (
-    <Fragment>
-      {id ? <ConversationComponent conversationId={id} /> : null}
-    </Fragment>
-  )
+  if (!id) {
+    return null
+  }
+
+  return <ConversationComponent conversationId={id} />
 }
 
-export default Conversation
+export default ConversationPage

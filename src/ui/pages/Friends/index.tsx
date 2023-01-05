@@ -1,23 +1,9 @@
-import Box from '@mui/material/Box'
-import { useUserStore } from 'app/user/UserProvider'
-import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import FriendCard from 'ui/components/FriendCard'
+import useFriends from 'app/useFriends'
+import FriendsComponent from 'ui/components/Friends'
 
-function Friends() {
-  const { user } = useUserStore()
-
-  const friends = useMemo(() => user?.friends || [], [user])
-
-  const renderFriends = () => {
-    return friends.map((friend) => (
-      <Link key={friend.id} to={`/conversation/${friend.conversationId}`}>
-        <FriendCard {...friend} />
-      </Link>
-    ))
-  }
-
-  return <Box>{friends.length > 0 ? renderFriends() : null}</Box>
+function FriendsPage() {
+  const { friends } = useFriends()
+  return <FriendsComponent friends={friends} />
 }
 
-export default Friends
+export default FriendsPage
