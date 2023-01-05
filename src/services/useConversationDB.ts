@@ -1,17 +1,16 @@
 import { Message } from 'domain/message'
-import { useRef } from 'react'
 import { CONVERSATION_DB_NAME } from 'utils/constants'
 
-function useConversationDB(conversationId: UniqueId) {
-  const dbRef = useRef<IDBDatabase>()
+let dbRef: IDBDatabase | null
 
+function useConversationDB(conversationId: UniqueId) {
   const addMessagesToDB = (messages: Message[]) => {
-    if (!dbRef.current) {
+    if (!dbRef) {
       console.error('Database not found')
       return
     }
 
-    const transaction = dbRef.current.transaction(conversationId, 'readwrite')
+    const transaction = dbRef.transaction(conversationId, 'readwrite')
     const objectStore = transaction.objectStore(conversationId)
 
     messages.forEach((message) => {
@@ -35,12 +34,12 @@ function useConversationDB(conversationId: UniqueId) {
       messages: Message[]
       lastMessageId?: UniqueId
     }>((resolve, reject) => {
-      if (!dbRef.current) {
+      if (!dbRef) {
         reject('Database not found')
         return
       }
 
-      const request = dbRef.current
+      const request = dbRef
         .transaction(conversationId, 'readwrite')
         .objectStore(conversationId)
         .getAll()
@@ -74,8 +73,8 @@ function useConversationDB(conversationId: UniqueId) {
       }
 
       request.onupgradeneeded = (event: any) => {
-        dbRef.current = event?.target?.result as IDBDatabase
-        const objectStore = dbRef.current.createObjectStore(conversationId, {
+        dbRef = event?.target?.result as IDBDatabase
+        const objectStore = dbRef.createObjectStore(conversationId, {
           keyPath: 'id'
         })
         objectStore.createIndex('id', 'id', { unique: true })
@@ -83,7 +82,7 @@ function useConversationDB(conversationId: UniqueId) {
 
       request.onsuccess = async (event: any) => {
         try {
-          dbRef.current = event?.target?.result as IDBDatabase
+          dbRef = event?.target?.result as IDBDatabase
           const { lastMessageId, messages } = await getMessagesDB()
           resolve({ lastMessageId, messages })
         } catch (error) {

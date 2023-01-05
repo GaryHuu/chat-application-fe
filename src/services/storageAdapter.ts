@@ -1,5 +1,5 @@
 import { FriendsStorageService, GroupsStorageService, UserStorageService } from 'app/ports'
-import { useStore } from './store'
+import { useStore } from 'services/store'
 
 export function useUserStorage(): UserStorageService {
   return useStore()

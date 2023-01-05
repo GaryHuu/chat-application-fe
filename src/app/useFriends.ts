@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useFriendsStorage, useUserStorage } from 'services/storageAdapter'
 import userApi from 'services/userApi'
 
@@ -15,14 +14,7 @@ function useFriends() {
     }
   }
 
-  useEffect(() => {
-    if (!friends) {
-      fetchFriends()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  return { friends }
+  return { friends, fetchFriends }
 }
 
 export default useFriends
