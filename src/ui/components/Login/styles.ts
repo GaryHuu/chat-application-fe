@@ -3,6 +3,7 @@ import { SxProps } from '@mui/material'
 type Styles = {
   wrapper: SxProps
   title: SxProps
+  subTitle: SxProps
   input: SxProps
 }
 
@@ -17,6 +18,9 @@ const styles: Styles = {
   title: {
     fontSize: 30,
     fontWeight: 'bold'
+  },
+  subTitle: {
+    fontSize: 20
   },
   input: {
     margin: '30px 0 16px',
