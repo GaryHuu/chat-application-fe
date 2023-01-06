@@ -1,7 +1,12 @@
 import Box from '@mui/material/Box'
 import useAuthenticate from 'app/useAuthenticate'
 import useConversation from 'app/useConversation'
-import { checkIsOwnerMessage, ContentMessage, Message as MessageType } from 'domain/message'
+import {
+  checkIsOwnerMessage,
+  ContentMessage,
+  createNewMessage,
+  Message as MessageType
+} from 'domain/message'
 import { useEffect, useRef, useState } from 'react'
 import InputMessage from 'ui/components/InputMessage'
 import Message from 'ui/components/Message'
@@ -38,12 +43,26 @@ function ConversationComponent({ conversationId }: Props) {
   const { user } = useAuthenticate()
 
   const addData = (newData: MessageType[]) => setData((prev) => [...prev, ...newData])
+  const removeDataByIndex = (index: number) =>
+    setData((prev) => {
+      const newValue = [...prev]
+      newValue.splice(index, 1)
+      return newValue
+    })
+
+  console.log(data)
 
   const handleSentMessage = async (value: ContentMessage) => {
     try {
-      const newMessage = await sentMessage(value, user)
+      const dataLength = data.length.toString()
+
+      const newMessage = createNewMessage(user, value, dataLength)
       addData([newMessage])
       isScrollRef.current = true
+
+      const newMessageResponse = await sentMessage(value, user)
+      removeDataByIndex(parseInt(dataLength))
+      addData([newMessageResponse])
     } catch (error) {
       console.log(error)
     }
@@ -118,12 +137,14 @@ function ConversationComponent({ conversationId }: Props) {
         id,
         content,
         createdAt,
+        status,
         user: { name, avatarURL }
       } = message
       return (
         <Message
           key={id}
           isOwner={checkIsOwnerMessage(user, message)}
+          status={status}
           name={name}
           content={content}
           avatarURL={avatarURL}

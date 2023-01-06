@@ -14,6 +14,7 @@ function useConversation(conversationId: UniqueId) {
       fromUserId: user.id
     }
     const newMessage = await conversationApi.sendNewMessage(payload)
+    newMessage.status = 'sent'
     addMessageToDB(newMessage)
     return newMessage
   }

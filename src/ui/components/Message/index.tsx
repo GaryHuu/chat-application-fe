@@ -1,4 +1,4 @@
-import { ContentMessage } from 'domain/message'
+import { ContentMessage, MessageStatus } from 'domain/message'
 import { UserName } from 'domain/user'
 import LeftMessage from 'ui/components/LeftMessage'
 import RightMessage from 'ui/components/RightMessage'
@@ -9,6 +9,7 @@ type Props = {
   name: UserName
   avatarURL?: URLString
   isOwner?: boolean
+  status: MessageStatus
 }
 
 function Message({ isOwner, ...otherProps }: Props) {
