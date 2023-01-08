@@ -1,7 +1,7 @@
+import { LinearProgress } from '@mui/material'
 import { Suspense } from 'react'
 import { useRoutes } from 'react-router-dom'
 import { routes } from 'ui/pages/routes'
-import { LinearProgress } from '@mui/material'
 
 function App() {
   const element = useRoutes(routes)

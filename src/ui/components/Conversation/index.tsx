@@ -39,7 +39,8 @@ function ConversationComponent({ conversationId }: Props) {
   const isScrollRef = useRef(false)
   const getMessageAbortController = useRef<AbortController>()
 
-  const { sentMessage, fetchMessages, getMessage } = useConversation(conversationId)
+  const { sentMessage, fetchMessages, getMessage, getMessagesInDB } =
+    useConversation(conversationId)
   const { user } = useAuthenticate()
 
   const addData = (newData: MessageType[]) => setData((prev) => [...prev, ...newData])
@@ -49,8 +50,6 @@ function ConversationComponent({ conversationId }: Props) {
       newValue.splice(index, 1)
       return newValue
     })
-
-  console.log(data)
 
   const handleSentMessage = async (value: ContentMessage) => {
     try {
@@ -64,17 +63,22 @@ function ConversationComponent({ conversationId }: Props) {
       removeDataByIndex(parseInt(dataLength))
       addData([newMessageResponse])
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
+
   const initConversation = async () => {
     try {
-      const newMessages = await fetchMessages()
+      const { messages: newMessagesDB, lastMessageId } = await getMessagesInDB()
+      addData(newMessagesDB)
+      isScrollRef.current = true
+
+      const newMessages = await fetchMessages(lastMessageId)
       addData(newMessages)
       isScrollRef.current = true
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

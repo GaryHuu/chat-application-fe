@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { API_ENDPOINT } from 'utils/constants'
+import { requestTrackingWorker } from './worker'
 
 const axiosClient = axios.create({
   baseURL: API_ENDPOINT,
@@ -11,6 +12,7 @@ const axiosClient = axios.create({
 // Add a request interceptor
 axiosClient.interceptors.request.use(
   function (config) {
+    requestTrackingWorker.postMessage(JSON.stringify(config))
     // Do something before request is sent
     return config
   },

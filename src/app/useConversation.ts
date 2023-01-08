@@ -29,21 +29,29 @@ function useConversation(conversationId: UniqueId) {
     return newMessage
   }
 
-  const fetchMessages = async () => {
-    const { messages: messagesDB, lastMessageId } = await initConversationDB()
+  const fetchMessages = async (lastMessageId?: string) => {
     const params: ParamsGetConversationType = {
       conversationId,
       lastMessageId
     }
     const newMessages = await conversationApi.getById(params)
     addMessagesToDB(newMessages)
-    return [...messagesDB, ...newMessages]
+    return newMessages
+  }
+
+  const getMessagesInDB = async () => {
+    const { messages, lastMessageId } = await initConversationDB()
+    return {
+      messages,
+      lastMessageId
+    }
   }
 
   return {
     fetchMessages,
     sentMessage,
-    getMessage
+    getMessage,
+    getMessagesInDB
   }
 }
 
