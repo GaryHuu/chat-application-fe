@@ -22,7 +22,7 @@ const scrollToBottomElement = (id: string) => {
 const checkIsBottomElement = (id: string) => {
   const element = document.getElementById(id)
   if (element) {
-    return element?.scrollHeight === element?.scrollTop + element?.clientHeight
+    return element?.scrollHeight <= Math.ceil(element?.scrollTop + element?.clientHeight)
   }
 
   return false
@@ -44,29 +44,33 @@ function ConversationComponent({ conversationId }: Props) {
   const { user } = useAuthenticate()
 
   const addData = (newData: MessageType[]) => setData((prev) => [...prev, ...newData])
-  const removeDataByIndex = (index: number) =>
+
+  const replaceData = (id: string, newData: MessageType) => {
     setData((prev) => {
-      const newValue = [...prev]
-      newValue.splice(index, 1)
+      const newValue = prev.filter((value) => value.id !== id)
+      newValue.push(newData)
       return newValue
     })
-
-  const handleSentMessage = async (value: ContentMessage) => {
-    try {
-      const dataLength = data.length.toString()
-
-      const newMessage = createNewMessage(user, value, dataLength)
-      addData([newMessage])
-      isScrollRef.current = true
-
-      const newMessageResponse = await sentMessage(value, user)
-      removeDataByIndex(parseInt(dataLength))
-      addData([newMessageResponse])
-    } catch (error) {
-      console.error(error)
-    }
   }
 
+  const handleSentMessage = async (value: ContentMessage) => {
+    const newMessage = createNewMessage(user, value)
+    addData([newMessage])
+    isScrollRef.current = true
+
+    const newMessageResponse = await sentMessage(newMessage)
+    replaceData(newMessage.id, newMessageResponse)
+  }
+
+  const handleSentRetry = async (message: MessageType) => {
+    const newMessage = { ...message }
+    newMessage.status = 'sending'
+    replaceData(newMessage.id, newMessage)
+    isScrollRef.current = true
+
+    const newMessageResponse = await sentMessage(newMessage)
+    replaceData(message.id, newMessageResponse)
+  }
 
   const initConversation = async () => {
     try {
@@ -88,14 +92,13 @@ function ConversationComponent({ conversationId }: Props) {
       const newMessage = await getMessage(user, getMessageAbortController.current)
       const isAborted = getMessageAbortController?.current?.signal.aborted
       if (!isAborted) {
-        addData([newMessage])
-
         const isBottom = checkIsBottomElement(MESSAGES_CONTAINER_ELEMENT_ID)
         if (isBottom) {
           isScrollRef.current = true
         } else {
           isScrollRef.current = false
         }
+        addData([newMessage])
       }
     } catch (error) {
       console.error(error)
@@ -153,6 +156,7 @@ function ConversationComponent({ conversationId }: Props) {
           content={content}
           avatarURL={avatarURL}
           createdAt={createdAt}
+          onRetry={() => handleSentRetry(message)}
         />
       )
     })

@@ -12,7 +12,8 @@ const axiosClient = axios.create({
 // Add a request interceptor
 axiosClient.interceptors.request.use(
   function (config) {
-    requestTrackingWorker.postMessage(JSON.stringify(config))
+    const sendingTime = new Date().toISOString()
+    requestTrackingWorker.postMessage(JSON.stringify({ ...config, sendingTime }))
     // Do something before request is sent
     return config
   },

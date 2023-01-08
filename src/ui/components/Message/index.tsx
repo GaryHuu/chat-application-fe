@@ -10,6 +10,7 @@ type Props = {
   avatarURL?: URLString
   isOwner?: boolean
   status: MessageStatus
+  onRetry?: () => void
 }
 
 function Message({ isOwner, ...otherProps }: Props) {

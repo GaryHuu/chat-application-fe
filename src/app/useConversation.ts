@@ -1,5 +1,5 @@
 import { ParamsGetConversationType, ParamsGetMessage, PayloadSendMessageType } from 'app/ports'
-import { ContentMessage } from 'domain/message'
+import { Message as MessageType, MessageStatus } from 'domain/message'
 import { User } from 'domain/user'
 import conversationApi from 'services/conversationApi'
 import useConversationDB from 'services/useConversationDB'
@@ -7,16 +7,24 @@ import useConversationDB from 'services/useConversationDB'
 function useConversation(conversationId: UniqueId) {
   const { initConversationDB, addMessagesToDB, addMessageToDB } = useConversationDB(conversationId)
 
-  const sentMessage = async (content: ContentMessage, user: User) => {
-    const payload: PayloadSendMessageType = {
-      content,
-      conversationId,
-      fromUserId: user.id
+  const sentMessage = async (message: MessageType) => {
+    try {
+      const payload: PayloadSendMessageType = {
+        content: message.content,
+        conversationId,
+        fromUserId: message.fromUserId
+      }
+      const newMessage = await conversationApi.sendNewMessage(payload)
+      newMessage.status = 'sent'
+      addMessageToDB(newMessage)
+      return newMessage
+    } catch (error) {
+      const newMessage = {
+        ...message,
+        status: 'error' as MessageStatus
+      }
+      return newMessage
     }
-    const newMessage = await conversationApi.sendNewMessage(payload)
-    newMessage.status = 'sent'
-    addMessageToDB(newMessage)
-    return newMessage
   }
 
   const getMessage = async (user: User, controller?: AbortController) => {

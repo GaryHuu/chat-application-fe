@@ -1,14 +1,17 @@
 import { RequestType } from 'domain/request'
+import requestTrackingDB from 'services/requestTrackingDB'
+
+const { initRequestTrackingDB, addRequestToDB } = requestTrackingDB()
+initRequestTrackingDB()
 
 // eslint-disable-next-line no-restricted-globals
 self.onmessage = (e: MessageEvent<string>) => {
   const dataEvent = JSON.parse(e.data)
   const newData: RequestType = {
-    endpoint: `${dataEvent?.baseURL?.substring(1)}${dataEvent?.url}`,
+    endpoint: `${dataEvent?.baseURL}${dataEvent?.url?.substring(1)}`,
     method: dataEvent?.method,
-    sendingTime: new Date().toISOString(),
+    sendingTime: dataEvent?.sendingTime,
     params: dataEvent?.method === 'get' ? dataEvent?.params : dataEvent?.data
   }
-
-  console.log(newData)
+  addRequestToDB(newData)
 }

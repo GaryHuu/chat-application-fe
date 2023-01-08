@@ -2,7 +2,7 @@ import { currentDatetime } from 'lib/datetime'
 import { User, UserName } from './user'
 
 export type ContentMessage = string
-export type MessageStatus = 'sending' | 'sent'
+export type MessageStatus = 'sending' | 'sent' | 'error'
 
 export type Message = {
   id: UniqueId
@@ -22,13 +22,9 @@ export function checkIsOwnerMessage(user: User, message: Message): boolean {
   return user.id === message.fromUserId
 }
 
-export function createNewMessage(
-  user: User,
-  content: ContentMessage,
-  messageId: UniqueId
-): Message {
+export function createNewMessage(user: User, content: ContentMessage): Message {
   const newMessage: Message = {
-    id: messageId,
+    id: Date.now().toString(),
     fromUserId: user.id,
     status: 'sending',
     content,

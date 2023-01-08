@@ -7,7 +7,10 @@ type Styles = {
   name: SxProps
   content: SxProps
   triangle: SxProps
-  time: SxProps
+  text: SxProps
+  status: SxProps
+  retryIcon: SxProps
+  statusContainer: SxProps
 }
 
 const styles: Styles = {
@@ -40,10 +43,27 @@ const styles: Styles = {
     borderStyle: 'solid',
     borderWidth: '0px 12px 12px 12px'
   },
-  time: {
-    fontSize: '12px',
+  text: {
+    fontSize: '13px'
+  },
+  status: {
+    fontSize: '13px',
+    marginLeft: '5px',
+    display: 'flex',
+    alignItems: 'center'
+  },
+  retryIcon: {
+    marginLeft: '1px',
+    fontSize: '15px',
+    color: 'red',
+    cursor: 'pointer'
+  },
+  statusContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     marginTop: '4px',
-    textAlign: 'end'
+    fontSize: '13px'
   }
 }
 

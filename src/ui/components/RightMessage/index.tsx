@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 import { MessageStatus } from 'domain/message'
 import { formatTime } from 'lib/datetime'
 import styles from './styles'
+import ReplayIcon from '@mui/icons-material/Replay'
 
 type Props = {
   name: string
@@ -12,9 +13,41 @@ type Props = {
   createdAt: string
   status: MessageStatus
   isOwner?: boolean
+  onRetry?: () => void
 }
 
-function RightMessage({ name, avatarURL, content, createdAt, status, isOwner = true }: Props) {
+function RightMessage({
+  name,
+  avatarURL,
+  content,
+  createdAt,
+  status,
+  isOwner = true,
+  onRetry
+}: Props) {
+  const handleRetry = () => {
+    onRetry?.()
+  }
+
+  const renderStatus = () => {
+    switch (status) {
+      case 'sending':
+        return 'Sending'
+      case 'sent':
+        return 'Sent'
+
+      case 'error':
+        return (
+          <Typography sx={styles.text} color="red">
+            Error
+          </Typography>
+        )
+
+      default:
+        return ''
+    }
+  }
+
   return (
     <Box sx={styles.wrapper}>
       <Box sx={styles.left}>
@@ -22,9 +55,13 @@ function RightMessage({ name, avatarURL, content, createdAt, status, isOwner = t
         <Box sx={styles.content}>
           <Box sx={styles.triangle} />
           {content}
-          <Typography sx={styles.time}>
-            {createdAt ? formatTime(createdAt) : null} {status === 'sending' ? 'Sending' : 'Sent'}
-          </Typography>
+          <Box sx={styles.statusContainer}>
+            <Typography sx={styles.text}>{createdAt ? formatTime(createdAt) : null}</Typography>
+            <Box sx={styles.status}>
+              {renderStatus()}
+              {status === 'error' && <ReplayIcon onClick={handleRetry} sx={styles.retryIcon} />}
+            </Box>
+          </Box>
         </Box>
       </Box>
       <Avatar alt={name} src={avatarURL} sx={styles.avatar} />
