@@ -1,9 +1,7 @@
-import useAuthenticate from 'app/useAuthenticate'
-import LoginComponent from 'ui/components/Login'
+import LoginContainer from 'ui/containers/Login'
 
 function LoginPage() {
-  const { user, handleLogin } = useAuthenticate()
-  return <LoginComponent user={user} handleLogin={handleLogin} />
+  return <LoginContainer />
 }
 
 export default LoginPage

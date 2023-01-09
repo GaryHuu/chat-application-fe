@@ -4,7 +4,7 @@ import PrivateRoute from './PrivateRoute'
 
 const MainLayout = lazy(() => import('ui/components/MainLayout'))
 const LoginPage = lazy(() => import('ui/pages/Login'))
-const UserPage = lazy(() => import('ui/pages/User'))
+const ProfilePage = lazy(() => import('ui/pages/Profile'))
 const FriendsPage = lazy(() => import('ui/pages/Friends'))
 const GroupsPage = lazy(() => import('ui/pages/Groups'))
 const ConversationPage = lazy(() => import('ui/pages/Conversation'))
@@ -32,7 +32,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/user',
-        element: <UserPage />
+        element: <ProfilePage />
       },
       {
         path: '/conversation/:id',

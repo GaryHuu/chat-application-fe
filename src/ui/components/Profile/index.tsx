@@ -12,7 +12,7 @@ type Props = {
   handleLogout: () => void
 }
 
-function UserComponent({ user, handleLogout }: Props) {
+function ProfileComponent({ user, handleLogout }: Props) {
   return (
     <Box sx={styles.wrapper}>
       <Avatar src={user?.avatarURL} alt={user.name} sx={styles.avatar} />
@@ -28,4 +28,4 @@ function UserComponent({ user, handleLogout }: Props) {
   )
 }
 
-export default UserComponent
+export default ProfileComponent

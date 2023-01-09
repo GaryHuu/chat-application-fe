@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import ConversationComponent from 'ui/components/Conversation'
+import ConversationContainer from 'ui/containers/Conversation'
 
 function ConversationPage() {
   const { id } = useParams()
@@ -8,7 +8,7 @@ function ConversationPage() {
     return null
   }
 
-  return <ConversationComponent conversationId={id} />
+  return <ConversationContainer conversationId={id} />
 }
 
 export default ConversationPage

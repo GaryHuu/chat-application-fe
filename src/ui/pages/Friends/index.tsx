@@ -1,18 +1,7 @@
-import useFriends from 'app/useFriends'
-import FriendsComponent from 'ui/components/Friends'
-import { useEffect } from 'react'
+import FriendsContainer from 'ui/containers/Friends'
 
 function FriendsPage() {
-  const { friends, fetchFriends } = useFriends()
-
-  useEffect(() => {
-    if (!friends) {
-      fetchFriends()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  return <FriendsComponent friends={friends} />
+  return <FriendsContainer />
 }
 
 export default FriendsPage
