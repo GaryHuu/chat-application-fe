@@ -1,4 +1,4 @@
-type RequestMethod = 'get' | 'post' | 'patch' | 'delete' | 'put'
+export type RequestMethod = 'get' | 'post' | 'patch' | 'delete' | 'put'
 
 export type RequestType = {
   endpoint: string
