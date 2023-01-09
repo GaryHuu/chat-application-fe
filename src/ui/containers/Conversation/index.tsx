@@ -4,17 +4,29 @@ import { ContentMessage, createNewMessage, Message as MessageType } from 'domain
 import { checkIsBottomElement, scrollToBottomElement } from 'utils/helpers/function'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import ConversationComponent, { MESSAGES_CONTAINER_ELEMENT_ID } from 'ui/components/Conversation'
+import { forwardMessage } from 'app/forwardMessage'
+import ForwardModalContainer from 'ui/containers/ForwardModal'
+import useConversationBasicInformation from 'ui/containers/Conversation/useConversationBasicInformation'
+import { useNavigate } from 'react-router-dom'
 
 type Props = {
   conversationId: string
 }
 
 function ConversationContainer({ conversationId }: Props) {
+  const [isOpenForwardModal, setIsOpenForwardModal] = useState(false)
+  const [messageSelectedForward, setMessageSelectedForward] = useState<MessageType>()
   const [data, setData] = useState<MessageType[]>([])
   const isScrollRef = useRef(false)
   const getMessageAbortController = useRef<AbortController>()
+  const { avatarURL, name } = useConversationBasicInformation(conversationId)
+  const navigate = useNavigate()
 
-  const { sentMessage, fetchMessages, getMessage, getMessagesInDB } =
+  const handleBack = () => {
+    navigate(-1)
+  }
+
+  const { sendMessage, fetchMessages, getMessage, getMessagesInDB } =
     useConversation(conversationId)
   const { user } = useAuthenticate()
 
@@ -28,22 +40,22 @@ function ConversationContainer({ conversationId }: Props) {
     })
   }
 
-  const handleSentMessage = async (value: ContentMessage) => {
+  const handleSendMessage = async (value: ContentMessage) => {
     const newMessage = createNewMessage(user, value)
     addData([newMessage])
     isScrollRef.current = true
 
-    const newMessageResponse = await sentMessage(newMessage)
+    const newMessageResponse = await sendMessage(newMessage)
     replaceData(newMessage.id, newMessageResponse)
   }
 
-  const handleSentRetry = async (message: MessageType) => {
+  const handleSendRetry = async (message: MessageType) => {
     const newMessage = { ...message }
     newMessage.status = 'sending'
     replaceData(newMessage.id, newMessage)
     isScrollRef.current = true
 
-    const newMessageResponse = await sentMessage(newMessage)
+    const newMessageResponse = await sendMessage(newMessage)
     replaceData(message.id, newMessageResponse)
   }
 
@@ -85,6 +97,28 @@ function ConversationContainer({ conversationId }: Props) {
     }
   }
 
+  const handleSetForwardMessage = (message: MessageType) => {
+    const newMessage = createNewMessage(user, message.content)
+    setMessageSelectedForward(newMessage)
+    setIsOpenForwardModal(true)
+  }
+
+  const handleForwardMessage = async (idsConversation: string[]) => {
+    try {
+      if (!messageSelectedForward || idsConversation.length === 0) {
+        throw new Error()
+      }
+      await forwardMessage(messageSelectedForward, idsConversation)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const handleCloseForwardMessage = () => {
+    setIsOpenForwardModal(false)
+    setMessageSelectedForward(undefined)
+  }
+
   const handleScroll = () => {
     if (isScrollRef.current) {
       isScrollRef.current = false
@@ -114,12 +148,23 @@ function ConversationContainer({ conversationId }: Props) {
   }, [])
 
   return (
-    <ConversationComponent
-      user={user}
-      data={data}
-      onSentRetry={handleSentRetry}
-      onSentMessage={handleSentMessage}
-    />
+    <>
+      <ConversationComponent
+        user={user}
+        headerData={{ avatarURL, name, conversationId }}
+        data={data}
+        onSendRetry={handleSendRetry}
+        onForwardMessage={handleSetForwardMessage}
+        onSendMessage={handleSendMessage}
+        onBack={handleBack}
+      />
+      <ForwardModalContainer
+        currentConversationId={conversationId}
+        isOpen={isOpenForwardModal}
+        onClose={handleCloseForwardMessage}
+        onSent={handleForwardMessage}
+      />
+    </>
   )
 }
 

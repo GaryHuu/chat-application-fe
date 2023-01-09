@@ -11,6 +11,7 @@ type Props = {
   isOwner?: boolean
   status: MessageStatus
   onRetry?: () => void
+  onForward?: () => void
 }
 
 function Message({ isOwner, ...otherProps }: Props) {

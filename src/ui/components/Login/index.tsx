@@ -25,6 +25,10 @@ const USERS_FAKE = [
   {
     name: 'User C',
     id: '63b6a3d7f3df0fbb7797442d'
+  },
+  {
+    name: 'User D',
+    id: '63b6a34df3df0fbb77974427'
   }
 ]
 
@@ -57,8 +61,7 @@ function LoginComponent({ handleLogin, user }: Props) {
           id="demo-simple-select"
           label="User ID"
           onChange={handleChange}
-          value={userId}
-        >
+          value={userId}>
           {USERS_FAKE.map((user) => (
             <MenuItem key={user.id} value={user.id}>
               {user.name}

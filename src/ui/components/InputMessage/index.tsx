@@ -1,9 +1,11 @@
+import PhotoCamera from '@mui/icons-material/PhotoCamera'
 import SendIcon from '@mui/icons-material/Send'
 import { InputBase } from '@mui/material'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import { ContentMessage } from 'domain/message'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { convertFileToBase64 } from 'utils/helpers/function'
 import styles from './styles'
 
 type Props = {
@@ -25,6 +27,12 @@ function InputMessage({ onSent }: Props) {
     }
   }, [onSent, value])
 
+  const handleSentImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const inputFile = event?.target?.files?.[0] as File
+    const imgData = await convertFileToBase64(inputFile)
+    onSent(imgData)
+  }
+
   useEffect(() => {
     const enterPress = (e: KeyboardEvent) => {
       if (e.key === 'Enter' && !e.shiftKey && focusedRef.current) {
@@ -38,6 +46,14 @@ function InputMessage({ onSent }: Props) {
 
   return (
     <Box sx={styles.wrapper}>
+      <IconButton
+        sx={styles.uploadIcon}
+        color="primary"
+        aria-label="upload picture"
+        component="label">
+        <input onChange={handleSentImage} hidden accept="image/*" type="file" />
+        <PhotoCamera />
+      </IconButton>
       <InputBase
         sx={styles.input}
         placeholder="Enter your message"

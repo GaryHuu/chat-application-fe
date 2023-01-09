@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useGroupsStorage, useUserStorage } from 'services/storageAdapter'
 import userApi from 'services/userApi'
 
@@ -14,7 +15,14 @@ function useGroups() {
     }
   }
 
-  return { groups, fetchGroups }
+  useEffect(() => {
+    if (!groups) {
+      fetchGroups()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  return { groups }
 }
 
 export default useGroups

@@ -1,16 +1,8 @@
-import useGroups from 'app/useGroups'
+import useGroups from 'ui/containers/Groups/useGroups'
 import GroupsComponent from 'ui/components/Groups'
-import { useEffect } from 'react'
 
 function GroupsContainer() {
-  const { groups, fetchGroups } = useGroups()
-
-  useEffect(() => {
-    if (!groups) {
-      fetchGroups()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { groups } = useGroups()
 
   return <GroupsComponent groups={groups} />
 }

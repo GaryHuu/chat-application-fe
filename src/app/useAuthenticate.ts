@@ -1,9 +1,10 @@
 import authApi from 'services/authApi'
-import { useFriendsStorage, useUserStorage } from 'services/storageAdapter'
+import { useFriendsStorage, useUserStorage, useGroupsStorage } from 'services/storageAdapter'
 
 function useAuthenticate() {
   const { updateUser, user, emptyUser } = useUserStorage()
   const { emptyFriends } = useFriendsStorage()
+  const { emptyGroups } = useGroupsStorage()
 
   const handleLogin = async (userId: UniqueId) => {
     try {
@@ -20,6 +21,7 @@ function useAuthenticate() {
   const handleLogout = () => {
     emptyUser()
     emptyFriends()
+    emptyGroups()
   }
 
   return {

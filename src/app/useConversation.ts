@@ -7,7 +7,7 @@ import useConversationDB from 'services/useConversationDB'
 function useConversation(conversationId: UniqueId) {
   const { initConversationDB, addMessagesToDB, addMessageToDB } = useConversationDB(conversationId)
 
-  const sentMessage = async (message: MessageType) => {
+  const sendMessage = async (message: MessageType) => {
     try {
       const payload: PayloadSendMessageType = {
         content: message.content,
@@ -57,7 +57,7 @@ function useConversation(conversationId: UniqueId) {
 
   return {
     fetchMessages,
-    sentMessage,
+    sendMessage,
     getMessage,
     getMessagesInDB
   }
