@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { RequestType, RequestMethod } from 'domain/request'
 import { API_ENDPOINT } from 'utils/constants'
-import { requestTrackingWorker } from './worker'
+import { requestTrackingWorker } from './workers'
 
 const axiosClient = axios.create({
   baseURL: API_ENDPOINT,
