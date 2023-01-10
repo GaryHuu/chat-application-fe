@@ -3,6 +3,7 @@ import { User, UserName } from './user'
 
 export type ContentMessage = string
 export type MessageStatus = 'sending' | 'sent' | 'error'
+export type ContentType = 'text' | 'image'
 
 export type Message = {
   id: UniqueId
@@ -11,6 +12,7 @@ export type Message = {
   content: ContentMessage
   createdAt: DateTimeString
   updatedAt: DateTimeString
+  type: ContentType
   user: {
     name: UserName
     id: UniqueId
@@ -22,11 +24,16 @@ export function checkIsOwnerMessage(user: User, message: Message): boolean {
   return user.id === message.fromUserId
 }
 
-export function createNewMessage(user: User, content: ContentMessage): Message {
+export function createNewMessage(
+  user: User,
+  content: ContentMessage,
+  type: ContentType = 'text'
+): Message {
   const newMessage: Message = {
     id: Date.now().toString(),
     fromUserId: user.id,
     status: 'sending',
+    type,
     content,
     createdAt: currentDatetime(),
     updatedAt: currentDatetime(),

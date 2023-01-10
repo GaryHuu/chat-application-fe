@@ -3,13 +3,12 @@ import SendIcon from '@mui/icons-material/Send'
 import { InputBase } from '@mui/material'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
-import { ContentMessage } from 'domain/message'
+import { ContentMessage, ContentType } from 'domain/message'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { convertFileToBase64 } from 'utils/helpers/function'
 import styles from './styles'
 
 type Props = {
-  onSent: (value: ContentMessage) => void
+  onSent: (value: ContentMessage | File, type: ContentType) => void
 }
 
 function InputMessage({ onSent }: Props) {
@@ -22,15 +21,14 @@ function InputMessage({ onSent }: Props) {
 
   const handleSubmit = useCallback(() => {
     if (value) {
-      onSent(value)
+      onSent(value, 'text')
       setValue('')
     }
   }, [onSent, value])
 
   const handleSentImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const inputFile = event?.target?.files?.[0] as File
-    const imgData = await convertFileToBase64(inputFile)
-    onSent(imgData)
+    onSent(inputFile, 'image')
   }
 
   useEffect(() => {

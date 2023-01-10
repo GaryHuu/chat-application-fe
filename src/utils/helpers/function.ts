@@ -24,6 +24,3 @@ export const convertFileToBase64 = (file: File): Promise<string> => {
     reader.onerror = reject
   })
 }
-
-// Solution not good
-export const isBase64Image = (value: string) => value.startsWith('data:image/')

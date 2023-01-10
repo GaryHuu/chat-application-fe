@@ -94,8 +94,7 @@ const styles: Styles = {
     fontSize: '13px'
   },
   contentImage: {
-    width: '100%',
-    maxWidth: '500px'
+    height: '200px'
   }
 }
 

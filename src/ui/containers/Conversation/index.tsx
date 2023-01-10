@@ -1,6 +1,11 @@
 import useAuthenticate from 'app/useAuthenticate'
 import useConversation from 'app/useConversation'
-import { ContentMessage, createNewMessage, Message as MessageType } from 'domain/message'
+import {
+  ContentMessage,
+  ContentType,
+  createNewMessage,
+  Message as MessageType
+} from 'domain/message'
 import { checkIsBottomElement, scrollToBottomElement } from 'utils/helpers/function'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import ConversationComponent, { MESSAGES_CONTAINER_ELEMENT_ID } from 'ui/components/Conversation'
@@ -8,6 +13,7 @@ import { forwardMessage } from 'app/forwardMessage'
 import ForwardModalContainer from 'ui/containers/ForwardModal'
 import useConversationBasicInformation from 'ui/containers/Conversation/useConversationBasicInformation'
 import { useNavigate } from 'react-router-dom'
+import { uploadImage } from 'services/uploadImageApi'
 
 type Props = {
   conversationId: string
@@ -40,10 +46,19 @@ function ConversationContainer({ conversationId }: Props) {
     })
   }
 
-  const handleSendMessage = async (value: ContentMessage) => {
-    const newMessage = createNewMessage(user, value)
-    addData([newMessage])
-    isScrollRef.current = true
+  const handleSendMessage = async (value: ContentMessage | File, type: ContentType) => {
+    let newMessage: MessageType
+
+    if (type === 'image' && typeof value === 'object') {
+      const url = await uploadImage(value)
+      newMessage = createNewMessage(user, url, 'image')
+      addData([newMessage])
+      isScrollRef.current = true
+    } else {
+      newMessage = createNewMessage(user, value as string)
+      addData([newMessage])
+      isScrollRef.current = true
+    }
 
     const newMessageResponse = await sendMessage(newMessage)
     replaceData(newMessage.id, newMessageResponse)
@@ -98,7 +113,7 @@ function ConversationContainer({ conversationId }: Props) {
   }
 
   const handleSetForwardMessage = (message: MessageType) => {
-    const newMessage = createNewMessage(user, message.content)
+    const newMessage = createNewMessage(user, message.content, message.type)
     setMessageSelectedForward(newMessage)
     setIsOpenForwardModal(true)
   }

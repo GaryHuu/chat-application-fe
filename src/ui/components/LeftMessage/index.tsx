@@ -2,20 +2,21 @@ import ShortcutIcon from '@mui/icons-material/Shortcut'
 import { Typography } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
+import { ContentType } from 'domain/message'
 import { formatTime } from 'lib/datetime'
-import { isBase64Image } from 'utils/helpers/function'
 import styles from './styles'
 
 type Props = {
   name: string
   avatarURL?: string
   content: string
+  type: ContentType
   createdAt: string
   onForward?: () => void
 }
 
-function LeftMessage({ name, avatarURL, content, createdAt, onForward = () => {} }: Props) {
-  const isImage = isBase64Image(content)
+function LeftMessage({ name, avatarURL, content, createdAt, type, onForward = () => {} }: Props) {
+  const isImage = type === 'image'
 
   return (
     <Box sx={styles.wrapper}>

@@ -14,12 +14,14 @@ const conversationApi = {
   sendNewMessage({
     content,
     conversationId,
-    fromUserId
+    fromUserId,
+    type
   }: PayloadSendMessageType): Promise<Message> {
     const url = `/conversations/${conversationId}`
     const payload = {
       content,
-      fromUserId
+      fromUserId,
+      type
     }
     return axiosClient.post(url, payload)
   },

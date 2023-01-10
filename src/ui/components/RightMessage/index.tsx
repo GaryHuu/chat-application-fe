@@ -1,12 +1,11 @@
+import ReplayIcon from '@mui/icons-material/Replay'
+import ShortcutIcon from '@mui/icons-material/Shortcut'
 import { Typography } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
-import { MessageStatus } from 'domain/message'
+import { ContentType, MessageStatus } from 'domain/message'
 import { formatTime } from 'lib/datetime'
 import styles from './styles'
-import ReplayIcon from '@mui/icons-material/Replay'
-import ShortcutIcon from '@mui/icons-material/Shortcut'
-import { isBase64Image } from 'utils/helpers/function'
 
 type Props = {
   name: string
@@ -15,6 +14,7 @@ type Props = {
   createdAt: string
   status: MessageStatus
   isOwner?: boolean
+  type: ContentType
   onRetry?: () => void
   onForward?: () => void
 }
@@ -26,6 +26,7 @@ function RightMessage({
   createdAt,
   status = 'sent',
   isOwner = true,
+  type,
   onRetry = () => {},
   onForward = () => {}
 }: Props) {
@@ -48,7 +49,7 @@ function RightMessage({
     }
   }
 
-  const isImage = isBase64Image(content)
+  const isImage = type === 'image'
 
   return (
     <Box sx={styles.wrapper}>

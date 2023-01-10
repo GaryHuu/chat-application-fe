@@ -1,7 +1,7 @@
 import { User } from 'domain/user'
 import { Friend } from 'domain/friend'
 import { Group } from 'domain/group'
-import { ContentMessage } from 'domain/message'
+import { ContentMessage, ContentType } from 'domain/message'
 
 // Auth API
 export type PayloadLoginType = {
@@ -17,6 +17,7 @@ export type PayloadSendMessageType = {
   content: ContentMessage
   conversationId: UniqueId
   fromUserId: UniqueId
+  type: ContentType
 }
 
 export type ParamsGetMessage = {

@@ -1,7 +1,12 @@
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import { checkIsOwnerMessage, ContentMessage, Message as MessageType } from 'domain/message'
+import {
+  checkIsOwnerMessage,
+  ContentMessage,
+  ContentType,
+  Message as MessageType
+} from 'domain/message'
 import { User } from 'domain/user'
 import InputMessage from 'ui/components/InputMessage'
 import Message from 'ui/components/Message'
@@ -12,7 +17,7 @@ type Props = {
   data: MessageType[]
   onSendRetry: (message: MessageType) => Promise<void>
   onForwardMessage: (message: MessageType) => void
-  onSendMessage: (value: ContentMessage) => Promise<void>
+  onSendMessage: (value: ContentMessage | File, type: ContentType) => Promise<void>
   onBack: () => void
   user: User
   headerData: {
@@ -38,6 +43,7 @@ function ConversationComponent({
       const {
         id,
         content,
+        type,
         createdAt,
         status,
         user: { name, avatarURL }
@@ -48,6 +54,7 @@ function ConversationComponent({
           isOwner={checkIsOwnerMessage(user, message)}
           status={status}
           name={name}
+          type={type}
           content={content}
           avatarURL={avatarURL}
           createdAt={createdAt}
@@ -61,7 +68,7 @@ function ConversationComponent({
   return (
     <Box sx={styles.wrapper}>
       <Box sx={styles.header}>
-        <Box> 
+        <Box>
           <ArrowBackIcon onClick={onBack} sx={styles.backIcon} />
         </Box>
         <Box sx={styles.information}>

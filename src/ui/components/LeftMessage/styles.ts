@@ -70,8 +70,7 @@ const styles: Styles = {
     textAlign: 'end'
   },
   contentImage: {
-    width: '100%',
-    maxWidth: '500px'
+    height: '200px'
   }
 }
 

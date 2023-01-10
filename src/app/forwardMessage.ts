@@ -7,7 +7,8 @@ export const forwardMessage = async (message: Message, idsConversation: UniqueId
     const payload: PayloadSendMessageType = {
       content: message.content,
       conversationId,
-      fromUserId: message.fromUserId
+      fromUserId: message.fromUserId,
+      type: message.type
     }
 
     return conversationApi.sendNewMessage(payload)

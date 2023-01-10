@@ -12,7 +12,8 @@ function useConversation(conversationId: UniqueId) {
       const payload: PayloadSendMessageType = {
         content: message.content,
         conversationId,
-        fromUserId: message.fromUserId
+        fromUserId: message.fromUserId,
+        type: message.type
       }
       const newMessage = await conversationApi.sendNewMessage(payload)
       newMessage.status = 'sent'

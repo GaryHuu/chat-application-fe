@@ -1,4 +1,4 @@
-import { ContentMessage, MessageStatus } from 'domain/message'
+import { ContentMessage, ContentType, MessageStatus } from 'domain/message'
 import { UserName } from 'domain/user'
 import LeftMessage from 'ui/components/LeftMessage'
 import RightMessage from 'ui/components/RightMessage'
@@ -10,6 +10,7 @@ type Props = {
   avatarURL?: URLString
   isOwner?: boolean
   status: MessageStatus
+  type: ContentType
   onRetry?: () => void
   onForward?: () => void
 }
