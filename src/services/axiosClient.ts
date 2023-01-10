@@ -1,7 +1,10 @@
 import axios from 'axios'
 import { RequestType, RequestMethod } from 'domain/request'
 import { API_ENDPOINT } from 'utils/constants'
-import { requestTrackingWorker } from './workers'
+import requestTrackingDB from './requestTrackingDB'
+
+const { initRequestTrackingDB, addRequestToDB } = requestTrackingDB()
+initRequestTrackingDB()
 
 const axiosClient = axios.create({
   baseURL: API_ENDPOINT,
@@ -20,7 +23,7 @@ axiosClient.interceptors.request.use(
       sendingTime,
       params: config?.method === 'get' ? config?.params : config?.data
     }
-    requestTrackingWorker.postMessage(JSON.stringify(request))
+    addRequestToDB(request)
     // Do something before request is sent
     return config
   },
