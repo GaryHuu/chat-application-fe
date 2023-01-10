@@ -12,6 +12,7 @@ import InputMessage from 'ui/components/InputMessage'
 import Message from 'ui/components/Message'
 import styles from './styles'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { Conversation } from 'domain/conversation'
 
 type Props = {
   data: MessageType[]
@@ -20,11 +21,7 @@ type Props = {
   onSendMessage: (value: ContentMessage | File, type: ContentType) => Promise<void>
   onBack: () => void
   user: User
-  headerData: {
-    avatarURL?: string
-    name?: string
-    conversationId: string
-  }
+  headerData?: Conversation
 }
 
 export const MESSAGES_CONTAINER_ELEMENT_ID = 'messages_container_element_id'

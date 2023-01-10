@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { RequestType, RequestMethod } from 'domain/request'
+import { RequestSchema, RequestMethod } from 'services/DBSchema'
 import { API_ENDPOINT } from 'utils/constants'
 import requestTrackingDB from './requestTrackingDB'
 
@@ -17,7 +17,7 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   function (config) {
     const sendingTime = new Date().toISOString()
-    const request: RequestType = {
+    const request: RequestSchema = {
       endpoint: `${config.baseURL}${config?.url?.substring(1)}`,
       method: config?.method as RequestMethod,
       sendingTime,

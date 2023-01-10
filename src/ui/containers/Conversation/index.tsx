@@ -11,9 +11,9 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import ConversationComponent, { MESSAGES_CONTAINER_ELEMENT_ID } from 'ui/components/Conversation'
 import { forwardMessage } from 'app/forwardMessage'
 import ForwardModalContainer from 'ui/containers/ForwardModal'
-import useConversationBasicInformation from 'ui/containers/Conversation/useConversationBasicInformation'
 import { useNavigate } from 'react-router-dom'
 import { uploadImage } from 'services/uploadImageApi'
+import { Conversation } from 'domain/conversation'
 
 type Props = {
   conversationId: string
@@ -23,17 +23,22 @@ function ConversationContainer({ conversationId }: Props) {
   const [isOpenForwardModal, setIsOpenForwardModal] = useState(false)
   const [messageSelectedForward, setMessageSelectedForward] = useState<MessageType>()
   const [data, setData] = useState<MessageType[]>([])
+  const [basicInformation, setBasicInformation] = useState<Conversation>()
   const isScrollRef = useRef(false)
   const getMessageAbortController = useRef<AbortController>()
-  const { avatarURL, name } = useConversationBasicInformation(conversationId)
   const navigate = useNavigate()
 
   const handleBack = () => {
     navigate(-1)
   }
 
-  const { sendMessage, fetchMessages, getMessage, getMessagesInDB } =
-    useConversation(conversationId)
+  const {
+    sendMessage,
+    fetchMessages,
+    getMessage,
+    getMessagesInDB,
+    getConversationBasicInformation
+  } = useConversation(conversationId)
   const { user } = useAuthenticate()
 
   const addData = (newData: MessageType[]) => setData((prev) => [...prev, ...newData])
@@ -141,12 +146,26 @@ function ConversationContainer({ conversationId }: Props) {
     }
   }
 
+  const fetchConversationBasicInformation = async () => {
+    try {
+      const conversation = await getConversationBasicInformation(user.id)
+      setBasicInformation(conversation)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   useLayoutEffect(() => {
     handleScroll()
   }, [data])
 
   useEffect(() => {
     initConversation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    fetchConversationBasicInformation()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -166,7 +185,7 @@ function ConversationContainer({ conversationId }: Props) {
     <>
       <ConversationComponent
         user={user}
-        headerData={{ avatarURL, name, conversationId }}
+        headerData={basicInformation}
         data={data}
         onSendRetry={handleSendRetry}
         onForwardMessage={handleSetForwardMessage}

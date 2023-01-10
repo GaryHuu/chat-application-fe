@@ -25,7 +25,11 @@ function LeftMessage({ name, avatarURL, content, createdAt, type, onForward = ()
         <Typography sx={styles.name}>{name}</Typography>
         <Box sx={styles.content}>
           <Box sx={styles.triangle} />
-          {isImage ? <img style={styles.contentImage} src={content} alt="" /> : content}
+          {isImage ? (
+            <img style={styles.contentImage} src={content} alt="" loading="lazy" />
+          ) : (
+            content
+          )}
           <Typography sx={styles.time}>{createdAt ? formatTime(createdAt) : null}</Typography>
         </Box>
       </Box>

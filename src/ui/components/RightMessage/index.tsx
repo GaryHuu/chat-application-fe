@@ -60,7 +60,11 @@ function RightMessage({
         <Typography sx={styles.name}>{isOwner ? 'You' : name}</Typography>
         <Box sx={styles.content}>
           <Box sx={styles.triangle} />
-          {isImage ? <img style={styles.contentImage} src={content} alt="" /> : content}
+          {isImage ? (
+            <img style={styles.contentImage} src={content} alt="" loading="lazy" />
+          ) : (
+            content
+          )}
           <Box sx={styles.statusContainer}>
             <Typography sx={styles.text}>{createdAt ? formatTime(createdAt) : null}</Typography>
             <Box sx={styles.status}>

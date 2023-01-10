@@ -1,4 +1,10 @@
-import { ParamsGetConversationType, ParamsGetMessage, PayloadSendMessageType } from 'app/ports'
+import {
+  ParamsGetConversationInfo,
+  ParamsGetConversationType,
+  ParamsGetMessage,
+  PayloadSendMessageType
+} from 'app/ports'
+import { Conversation } from 'domain/conversation'
 import { Message } from 'domain/message'
 import axiosClient from './axiosClient'
 
@@ -26,16 +32,25 @@ const conversationApi = {
     return axiosClient.post(url, payload)
   },
   getNewMessage(
-    { conversationId, useId }: ParamsGetMessage,
+    { conversationId, userId }: ParamsGetMessage,
     controller?: AbortController
   ): Promise<Message> {
     const url = `/conversations/${conversationId}/message`
     const params = {
-      useId
+      userId
     }
     return axiosClient.get(url, {
       params,
       signal: controller?.signal || undefined
+    })
+  },
+  getConversationInfo({ conversationId, userId }: ParamsGetConversationInfo): Promise<Conversation> {
+    const url = `/conversations/${conversationId}/info`
+    const params = {
+      userId
+    }
+    return axiosClient.get(url, {
+      params
     })
   }
 }

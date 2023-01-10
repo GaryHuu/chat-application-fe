@@ -1,3 +1,6 @@
+import { Message } from 'domain/message'
+import { MessageSchema } from 'services/DBSchema'
+
 export const scrollToBottomElement = (id: string) => {
   const element = document.getElementById(id)
   if (element) {
@@ -23,4 +26,12 @@ export const convertFileToBase64 = (file: File): Promise<string> => {
     }
     reader.onerror = reject
   })
+}
+
+export const normalizeMessagesToMessagesSchema = (messages: Message[]): MessageSchema[] => {
+  return messages as MessageSchema[]
+}
+
+export const normalizeMessagesSchemaToMessages = (messagesDB: MessageSchema[]): Message[] => {
+  return messagesDB as Message[]
 }

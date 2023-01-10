@@ -22,7 +22,12 @@ export type PayloadSendMessageType = {
 
 export type ParamsGetMessage = {
   conversationId: UniqueId
-  useId: UniqueId
+  userId: UniqueId
+}
+
+export type ParamsGetConversationInfo = {
+  conversationId: UniqueId
+  userId: UniqueId
 }
 
 // Main Port

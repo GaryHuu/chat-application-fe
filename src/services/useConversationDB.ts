@@ -1,5 +1,10 @@
 import { Message } from 'domain/message'
 import { CONVERSATION_DB_NAME } from 'utils/constants'
+import {
+  normalizeMessagesSchemaToMessages,
+  normalizeMessagesToMessagesSchema
+} from 'utils/helpers/function'
+import { MessageSchema } from 'services/DBSchema'
 
 let dbRef: IDBDatabase | null
 
@@ -13,7 +18,9 @@ function useConversationDB(conversationId: UniqueId) {
     const transaction = dbRef.transaction(conversationId, 'readwrite')
     const objectStore = transaction.objectStore(conversationId)
 
-    messages.forEach((message) => {
+    const messageDB = normalizeMessagesToMessagesSchema(messages)
+
+    messageDB.forEach((message) => {
       const request = objectStore.add(message)
 
       request.onsuccess = () => {}
@@ -45,7 +52,8 @@ function useConversationDB(conversationId: UniqueId) {
         .getAll()
 
       request.onsuccess = () => {
-        const messages = request.result as Message[]
+        const messagesDB = request.result as MessageSchema[]
+        const messages = normalizeMessagesSchemaToMessages(messagesDB)
         if (messages.length > 0) {
           const lastMessageId = messages[messages.length - 1].id as UniqueId
           resolve({ messages, lastMessageId })

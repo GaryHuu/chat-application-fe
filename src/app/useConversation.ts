@@ -1,4 +1,9 @@
-import { ParamsGetConversationType, ParamsGetMessage, PayloadSendMessageType } from 'app/ports'
+import {
+  ParamsGetConversationInfo,
+  ParamsGetConversationType,
+  ParamsGetMessage,
+  PayloadSendMessageType
+} from 'app/ports'
 import { Message as MessageType, MessageStatus } from 'domain/message'
 import { User } from 'domain/user'
 import conversationApi from 'services/conversationApi'
@@ -31,7 +36,7 @@ function useConversation(conversationId: UniqueId) {
   const getMessage = async (user: User, controller?: AbortController) => {
     const params: ParamsGetMessage = {
       conversationId,
-      useId: user.id
+      userId: user.id
     }
     const newMessage = await conversationApi.getNewMessage(params, controller)
     addMessageToDB(newMessage)
@@ -56,11 +61,21 @@ function useConversation(conversationId: UniqueId) {
     }
   }
 
+  const getConversationBasicInformation = async (userId: UniqueId) => {
+    const params: ParamsGetConversationInfo = {
+      conversationId,
+      userId
+    }
+    const conversation = await conversationApi.getConversationInfo(params)
+    return conversation
+  }
+
   return {
     fetchMessages,
     sendMessage,
     getMessage,
-    getMessagesInDB
+    getMessagesInDB,
+    getConversationBasicInformation
   }
 }
 

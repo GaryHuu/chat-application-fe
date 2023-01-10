@@ -1,4 +1,4 @@
-import { RequestType } from 'domain/request'
+import { RequestSchema } from 'services/DBSchema'
 
 const OBJECT_STORE_NAME = 'User'
 
@@ -16,9 +16,12 @@ function requestTrackingDB() {
 
       request.onupgradeneeded = (event: any) => {
         dbRef = event?.target?.result as IDBDatabase
-        dbRef.createObjectStore(OBJECT_STORE_NAME, {
+        const objectStore = dbRef.createObjectStore(OBJECT_STORE_NAME, {
           keyPath: 'sendingTime'
         })
+        objectStore.createIndex('endpoint', 'endpoint', { unique: false })
+        objectStore.createIndex('sendingTime', 'sendingTime', { unique: false })
+        objectStore.createIndex('method', 'method', { unique: false })
       }
 
       request.onsuccess = async (event: any) => {
@@ -32,7 +35,7 @@ function requestTrackingDB() {
     })
   }
 
-  const addRequestToDB = (request: RequestType) => {
+  const addRequestToDB = (request: RequestSchema) => {
     if (!dbRef) {
       console.error('Database not found')
       return
@@ -47,7 +50,7 @@ function requestTrackingDB() {
   }
 
   const getRequestsDB = () => {
-    return new Promise<RequestType[]>((resolve, reject) => {
+    return new Promise<RequestSchema[]>((resolve, reject) => {
       if (!dbRef) {
         reject('Database not found')
         return
@@ -59,7 +62,7 @@ function requestTrackingDB() {
         .getAll()
 
       request.onsuccess = () => {
-        const requests = request.result as RequestType[]
+        const requests = request.result as RequestSchema[]
         if (requests.length > 0) {
           resolve(requests)
         } else {
