@@ -78,6 +78,8 @@ function useConversationDB(conversationId: UniqueId) {
           keyPath: 'id'
         })
         objectStore.createIndex('id', 'id', { unique: true })
+        objectStore.createIndex('updatedAt', 'updatedAt', { unique: false })
+        objectStore.createIndex('content', 'content', { unique: false })
       }
 
       request.onsuccess = async (event: any) => {

@@ -61,7 +61,8 @@ function LoginComponent({ handleLogin, user }: Props) {
           id="demo-simple-select"
           label="User ID"
           onChange={handleChange}
-          value={userId}>
+          value={userId}
+        >
           {USERS_FAKE.map((user) => (
             <MenuItem key={user.id} value={user.id}>
               {user.name}

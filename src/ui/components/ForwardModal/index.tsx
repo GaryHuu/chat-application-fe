@@ -115,7 +115,8 @@ function ForwardModalComponent({ friends, groups, isOpen, onClose, onSent }: Pro
             disabled={isEmptySelected}
             sx={styles.actionSent}
             onClick={handleSubmit}
-            variant="contained">
+            variant="contained"
+          >
             Sent
           </Button>
         </Box>
