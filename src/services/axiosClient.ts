@@ -20,7 +20,6 @@ axiosClient.interceptors.request.use(
       endpoint: `${config.baseURL}${config?.url?.substring(1)}`,
       method: config?.method as RequestMethod,
       sendingTime: Date.now(),
-      params: config?.method === 'get' ? config?.params : config?.data
     }
     addRequestToDB(request)
     // Do something before request is sent

@@ -5,5 +5,4 @@ export type RequestType = {
   endpoint: string
   sendingTime: number
   method: RequestMethod
-  params?: object
 }
