@@ -151,7 +151,11 @@ function DashboardContainer() {
 
   useEffect(() => {
     const intervalMin = setInterval(() => {
-      Promise.all([fetchTotalRequestMin(), fetchTheMostCalledEndpointMin()])
+      Promise.all([
+        fetchTotalRequestMin(),
+        fetchTheMostCalledEndpointMin(),
+        fetchListTotalRequestsPerMinOfHour()
+      ])
     }, 1000 * 60)
 
     return () => clearInterval(intervalMin)
@@ -161,7 +165,7 @@ function DashboardContainer() {
     const intervalHour = setInterval(() => {
       Promise.all([
         fetchTotalRequestHour(),
-        fetchListTotalRequestsPerMinOfHour(),
+        fetchListTotalRequestsPerHourOfDay(),
         fetchTheMostCalledEndpointHour()
       ])
     }, 1000 * 60 * 60)
@@ -171,11 +175,7 @@ function DashboardContainer() {
 
   useEffect(() => {
     const intervalDay = setInterval(() => {
-      Promise.all([
-        fetchTotalRequestDay(),
-        fetchListTotalRequestsPerHourOfDay(),
-        fetchTheMostCalledEndpointDay()
-      ])
+      Promise.all([fetchTotalRequestDay(), fetchTheMostCalledEndpointDay()])
     }, 1000 * 60 * 60 * 24)
 
     return () => clearInterval(intervalDay)
