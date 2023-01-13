@@ -2,6 +2,7 @@ import { User } from 'domain/user'
 import { Friend } from 'domain/friend'
 import { Group } from 'domain/group'
 import { ContentMessage, ContentType } from 'domain/message'
+import { RequestMethod } from 'domain/request'
 
 // Auth API
 export type PayloadLoginType = {
@@ -29,6 +30,16 @@ export type ParamsGetConversationInfo = {
   conversationId: UniqueId
   userId: UniqueId
 }
+
+// Requests DB
+export type ParamsGetRequests = 'minute' | 'hour' | 'day'
+
+export type TotalStatistic = {
+  total: number
+  percent: number
+}
+
+export type MostCalledEndpointReturnType = { method: RequestMethod; endpoint: string }
 
 // Main Port
 export interface UserStorageService {

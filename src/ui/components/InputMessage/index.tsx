@@ -20,7 +20,7 @@ function InputMessage({ onSent }: Props) {
   }
 
   const handleSubmit = useCallback(() => {
-    if (value) {
+    if (value.trim()) {
       onSent(value, 'text')
       setValue('')
     }
@@ -48,8 +48,7 @@ function InputMessage({ onSent }: Props) {
         sx={styles.uploadIcon}
         color="primary"
         aria-label="upload picture"
-        component="label"
-      >
+        component="label">
         <input onChange={handleSentImage} hidden accept="image/*" type="file" />
         <PhotoCamera />
       </IconButton>

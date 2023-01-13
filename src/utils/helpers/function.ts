@@ -1,5 +1,6 @@
 import { Message } from 'domain/message'
-import { MessageSchema } from 'services/DBSchema'
+import { RequestType } from 'domain/request'
+import { MessageSchema, RequestSchema } from 'services/DBSchema'
 
 export const scrollToBottomElement = (id: string) => {
   const element = document.getElementById(id)
@@ -34,4 +35,17 @@ export const normalizeMessagesToMessagesSchema = (messages: Message[]): MessageS
 
 export const normalizeMessagesSchemaToMessages = (messagesDB: MessageSchema[]): Message[] => {
   return messagesDB as Message[]
+}
+
+export const normalizeRequestToRequestSchema = (requests: RequestType[]): RequestSchema[] => {
+  return requests as RequestSchema[]
+}
+
+export const normalizeRequestSchemaToRequest = (requests: RequestSchema[]): RequestType[] => {
+  return requests as RequestType[]
+}
+
+export const calculatePercent = (origin: number, value: number) => {
+  if (origin === 0) return value === 0 ? 0 : 100
+  return ((value - origin) / origin) * 100
 }

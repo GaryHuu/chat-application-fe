@@ -8,11 +8,16 @@ const ProfilePage = lazy(() => import('ui/pages/Profile'))
 const FriendsPage = lazy(() => import('ui/pages/Friends'))
 const GroupsPage = lazy(() => import('ui/pages/Groups'))
 const ConversationPage = lazy(() => import('ui/pages/Conversation'))
+const DashboardPage = lazy(() => import('ui/pages/Dashboard'))
 
 export const routes: RouteObject[] = [
   {
     path: '/login',
     element: <LoginPage />
+  },
+  {
+    path: '/dashboard',
+    element: <DashboardPage />
   },
   {
     path: '/',
@@ -39,5 +44,5 @@ export const routes: RouteObject[] = [
         element: <ConversationPage />
       }
     ]
-  }
+  },
 ]

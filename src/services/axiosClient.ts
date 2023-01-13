@@ -1,10 +1,9 @@
 import axios from 'axios'
-import { RequestSchema, RequestMethod } from 'services/DBSchema'
+import { RequestMethod } from 'domain/request'
+import { genUniqueId } from 'lib/datetime'
+import { RequestSchema } from 'services/DBSchema'
+import { addRequestToDB } from 'services/requestTrackingDB'
 import { API_ENDPOINT } from 'utils/constants'
-import requestTrackingDB from './requestTrackingDB'
-
-const { initRequestTrackingDB, addRequestToDB } = requestTrackingDB()
-initRequestTrackingDB()
 
 const axiosClient = axios.create({
   baseURL: API_ENDPOINT,
@@ -16,11 +15,11 @@ const axiosClient = axios.create({
 // Add a request interceptor
 axiosClient.interceptors.request.use(
   function (config) {
-    const sendingTime = new Date().toISOString()
     const request: RequestSchema = {
+      id: genUniqueId(),
       endpoint: `${config.baseURL}${config?.url?.substring(1)}`,
       method: config?.method as RequestMethod,
-      sendingTime,
+      sendingTime: Date.now(),
       params: config?.method === 'get' ? config?.params : config?.data
     }
     addRequestToDB(request)

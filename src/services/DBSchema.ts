@@ -1,12 +1,6 @@
 import { Message } from 'domain/message'
+import { RequestType } from 'domain/request'
 
-export type RequestMethod = 'get' | 'post' | 'patch' | 'delete' | 'put'
-
-export type RequestSchema = {
-  endpoint: string
-  sendingTime: DateTimeString
-  method: RequestMethod
-  params?: object
-}
+export type RequestSchema = RequestType & {}
 
 export type MessageSchema = Message & {}
