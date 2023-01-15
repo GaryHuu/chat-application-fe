@@ -1,6 +1,17 @@
 import { Message } from 'domain/message'
 import { RequestType } from 'domain/request'
 import { MessageSchema, RequestSchema } from 'services/DBSchema'
+import CryptoJS from 'crypto-js'
+import { SECRET_KEY_ENCRYPT } from 'utils/constants'
+
+export const encryptData = (text: string) => {
+  return CryptoJS.AES.encrypt(text, SECRET_KEY_ENCRYPT).toString()
+}
+
+export const decryptData = (cipherText: string): string => {
+  const bytes = CryptoJS.AES.decrypt(cipherText, SECRET_KEY_ENCRYPT)
+  return bytes.toString(CryptoJS.enc.Utf8)
+}
 
 export const scrollToBottomElement = (id: string) => {
   const element = document.getElementById(id)
@@ -45,6 +56,7 @@ export const normalizeMessagesToMessagesSchema = (messages: Message[]): MessageS
   return messages.map((message) => {
     return {
       ...message,
+      content: encryptData(message.content),
       createdAt: new Date(message.createdAt).getTime()
     }
   })
@@ -54,6 +66,7 @@ export const normalizeMessagesSchemaToMessages = (messagesDB: MessageSchema[]): 
   return messagesDB.map((messageDB) => {
     return {
       ...messageDB,
+      content: decryptData(messageDB.content),
       createdAt: new Date(messageDB.createdAt).toISOString()
     }
   })
