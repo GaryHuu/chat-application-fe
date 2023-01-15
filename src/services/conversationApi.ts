@@ -44,7 +44,10 @@ const conversationApi = {
       signal: controller?.signal || undefined
     })
   },
-  getConversationInfo({ conversationId, userId }: ParamsGetConversationInfo): Promise<Conversation> {
+  getConversationInfo({
+    conversationId,
+    userId
+  }: ParamsGetConversationInfo): Promise<Conversation> {
     const url = `/conversations/${conversationId}/info`
     const params = {
       userId

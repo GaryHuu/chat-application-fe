@@ -44,5 +44,5 @@ export const routes: RouteObject[] = [
         element: <ConversationPage />
       }
     ]
-  },
+  }
 ]

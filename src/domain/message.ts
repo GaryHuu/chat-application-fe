@@ -11,7 +11,6 @@ export type Message = {
   status: MessageStatus
   content: ContentMessage
   createdAt: DateTimeString
-  updatedAt: DateTimeString
   type: ContentType
   user: {
     name: UserName
@@ -36,7 +35,6 @@ export function createNewMessage(
     type,
     content,
     createdAt: currentDatetime(),
-    updatedAt: currentDatetime(),
     user: {
       name: user.name,
       id: user.id,

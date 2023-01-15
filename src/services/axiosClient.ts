@@ -19,7 +19,7 @@ axiosClient.interceptors.request.use(
       id: genUniqueId(),
       endpoint: `${config.baseURL}${config?.url?.substring(1)}`,
       method: config?.method as RequestMethod,
-      sendingTime: Date.now(),
+      sendingTime: Date.now()
     }
     addRequestToDB(request)
     // Do something before request is sent

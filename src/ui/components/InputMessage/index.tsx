@@ -48,7 +48,8 @@ function InputMessage({ onSent }: Props) {
         sx={styles.uploadIcon}
         color="primary"
         aria-label="upload picture"
-        component="label">
+        component="label"
+      >
         <input onChange={handleSentImage} hidden accept="image/*" type="file" />
         <PhotoCamera />
       </IconButton>

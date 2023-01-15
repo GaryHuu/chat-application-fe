@@ -29,12 +29,34 @@ export const convertFileToBase64 = (file: File): Promise<string> => {
   })
 }
 
+export const normalizeMessages = (messages: Message[]): Message[] => {
+  return messages.map((message) => {
+    const { content, createdAt, fromUserId, id, status = 'sent', type, user } = message
+    return { content, createdAt, fromUserId, id, status, type, user }
+  })
+}
+
+export const normalizeMessage = (message: Message): Message => {
+  const { content, createdAt, fromUserId, id, status, type, user } = message
+  return { content, createdAt, fromUserId, id, status, type, user }
+}
+
 export const normalizeMessagesToMessagesSchema = (messages: Message[]): MessageSchema[] => {
-  return messages as MessageSchema[]
+  return messages.map((message) => {
+    return {
+      ...message,
+      createdAt: new Date(message.createdAt).getTime()
+    }
+  })
 }
 
 export const normalizeMessagesSchemaToMessages = (messagesDB: MessageSchema[]): Message[] => {
-  return messagesDB as Message[]
+  return messagesDB.map((messageDB) => {
+    return {
+      ...messageDB,
+      createdAt: new Date(messageDB.createdAt).toISOString()
+    }
+  })
 }
 
 export const normalizeRequestToRequestSchema = (requests: RequestType[]): RequestSchema[] => {

@@ -8,6 +8,7 @@ import { Message as MessageType, MessageStatus } from 'domain/message'
 import { User } from 'domain/user'
 import conversationApi from 'services/conversationApi'
 import useConversationDB from 'services/useConversationDB'
+import { normalizeMessage, normalizeMessages } from 'utils/helpers/function'
 
 function useConversation(conversationId: UniqueId) {
   const { initConversationDB, addMessagesToDB, addMessageToDB } = useConversationDB(conversationId)
@@ -22,8 +23,9 @@ function useConversation(conversationId: UniqueId) {
       }
       const newMessage = await conversationApi.sendNewMessage(payload)
       newMessage.status = 'sent'
-      addMessageToDB(newMessage)
-      return newMessage
+      const newMessageNormalized = normalizeMessage(newMessage)
+      addMessageToDB(newMessageNormalized)
+      return newMessageNormalized
     } catch (error) {
       const newMessage = {
         ...message,
@@ -39,8 +41,10 @@ function useConversation(conversationId: UniqueId) {
       userId: user.id
     }
     const newMessage = await conversationApi.getNewMessage(params, controller)
-    addMessageToDB(newMessage)
-    return newMessage
+    newMessage.status = 'sent'
+    const newMessageNormalized = normalizeMessage(newMessage)
+    addMessageToDB(newMessageNormalized)
+    return newMessageNormalized
   }
 
   const fetchMessages = async (lastMessageId?: string) => {
@@ -49,8 +53,9 @@ function useConversation(conversationId: UniqueId) {
       lastMessageId
     }
     const newMessages = await conversationApi.getById(params)
-    addMessagesToDB(newMessages)
-    return newMessages
+    const newMessagesNormalized = normalizeMessages(newMessages)
+    addMessagesToDB(newMessagesNormalized)
+    return newMessagesNormalized
   }
 
   const getMessagesInDB = async () => {
