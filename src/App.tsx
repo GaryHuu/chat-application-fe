@@ -8,6 +8,7 @@ function App() {
   const element = useRoutes(routes)
 
   useEffect(() => {
+    // Test deploy
     initRequestTrackingDB()
   }, [])
 
