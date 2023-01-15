@@ -17,5 +17,10 @@
     "jsx": "react-jsx",
     "baseUrl": "src"
   },
-  "include": ["src"]
+  "include": ["src"],
+  "paths": {
+    "crypto": [
+      "node_modules/crypto-js"
+    ]
+  }
 }
