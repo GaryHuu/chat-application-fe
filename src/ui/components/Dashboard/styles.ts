@@ -6,6 +6,7 @@ type Styles = {
   spacing: SxProps
   mostCalledContainer: SxProps
   bold: SxProps
+  underline: SxProps
   mostCalledContent: SxProps
 }
 
@@ -27,6 +28,9 @@ const styles: Styles = {
   },
   bold: {
     fontWeight: 'bold'
+  },
+  underline: {
+    textDecoration: 'underline'
   },
   mostCalledContent: {
     display: 'flex',

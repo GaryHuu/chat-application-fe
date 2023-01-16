@@ -56,12 +56,14 @@ export const getTotalRequestsPerDay = async (): Promise<TotalStatistic> => {
 }
 
 export const getListTotalRequestsPerMinOfHour = async () => {
-  const totalRequestPerHour = await getListTotalRequestsPerMinOfHourDB()
+  const now = Date.now()
+  const totalRequestPerHour = await getListTotalRequestsPerMinOfHourDB(now)
   return totalRequestPerHour
 }
 
 export const getListTotalRequestsPerHourOfDay = async () => {
-  const totalRequestPerHour = await getListTotalRequestsPerHourOfDayDB()
+  const now = Date.now()
+  const totalRequestPerHour = await getListTotalRequestsPerHourOfDayDB(now)
   return totalRequestPerHour
 }
 

@@ -52,8 +52,11 @@ function DashBoardComponent({
                 key as keyof typeof mostCalledEndpoint
               ]?.method.toLocaleUpperCase()}
             </Typography>
-            <Typography>
+            <Typography sx={styles.underline}>
               {mostCalledEndpoint?.[key as keyof typeof mostCalledEndpoint]?.endpoint}
+            </Typography>
+            <Typography>
+              x{mostCalledEndpoint?.[key as keyof typeof mostCalledEndpoint]?.times}
             </Typography>
           </Box>
         </Box>
@@ -80,8 +83,7 @@ function DashBoardComponent({
           width: '100%',
           maxHeight: '500px',
           marginTop: '10px'
-        }}
-      >
+        }}>
         <LineChart
           key="hour"
           data={listTotalRequestMin || []}
@@ -96,8 +98,7 @@ function DashBoardComponent({
           width: '100%',
           maxHeight: '500px',
           marginTop: '10px'
-        }}
-      >
+        }}>
         <LineChart
           key="day"
           data={listTotalRequestHour || []}

@@ -123,14 +123,13 @@ const getTotalRequests = (current: DateNow, type: ParamsGetRequests) => {
   })
 }
 
-const getListTotalRequestsPerMinOfHourDB = () => {
+const getListTotalRequestsPerMinOfHourDB = (current: DateNow) => {
   return new Promise<number[]>((resolve, reject) => {
     if (!dbRef) {
       reject('Database not found')
       return
     }
-    const now = Date.now()
-    const keyRangeValue = IDBKeyRange.bound(now - 1000 * 60 * 60, now, true, false)
+    const keyRangeValue = IDBKeyRange.bound(current - 1000 * 60 * 60, current, true, false)
     const transaction = dbRef.transaction(OBJECT_STORE_NAME, 'readonly')
     const objectStore = transaction.objectStore(OBJECT_STORE_NAME)
     const index = objectStore.index('sendingTime')
@@ -142,7 +141,7 @@ const getListTotalRequestsPerMinOfHourDB = () => {
       if (cursor) {
         const request = cursor.value as RequestSchema
         for (let i = 0; i < length; i++) {
-          if (request.sendingTime >= now - 1000 * 60 * (i + 1)) {
+          if (request.sendingTime >= current - 1000 * 60 * (i + 1)) {
             total[length - i - 1] = total[length - i - 1] + 1
             break
           }
@@ -155,14 +154,13 @@ const getListTotalRequestsPerMinOfHourDB = () => {
   })
 }
 
-const getListTotalRequestsPerHourOfDayDB = () => {
+const getListTotalRequestsPerHourOfDayDB = (current: DateNow) => {
   return new Promise<number[]>((resolve, reject) => {
     if (!dbRef) {
       reject('Database not found')
       return
     }
-    const now = Date.now()
-    const keyRangeValue = IDBKeyRange.bound(now - 1000 * 60 * 60 * 24, now, true, false)
+    const keyRangeValue = IDBKeyRange.bound(current - 1000 * 60 * 60 * 24, current, true, false)
     const transaction = dbRef.transaction(OBJECT_STORE_NAME, 'readonly')
     const objectStore = transaction.objectStore(OBJECT_STORE_NAME)
     const index = objectStore.index('sendingTime')
@@ -174,7 +172,7 @@ const getListTotalRequestsPerHourOfDayDB = () => {
       if (cursor) {
         const request = cursor.value as RequestSchema
         for (let i = 0; i < length; i++) {
-          if (request.sendingTime >= now - 1000 * 60 * 60 * (i + 1)) {
+          if (request.sendingTime >= current - 1000 * 60 * 60 * (i + 1)) {
             total[length - i - 1] = total[length - i - 1] + 1
             break
           }
@@ -247,7 +245,8 @@ const getTheMostCalledEndpointDB = (current: DateNow, type: ParamsGetRequests) =
 
             resolve({
               method: method as RequestMethod,
-              endpoint: key
+              endpoint: key,
+              times: max
             })
           }
         }

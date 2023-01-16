@@ -39,7 +39,11 @@ export type TotalStatistic = {
   percent: number
 }
 
-export type MostCalledEndpointReturnType = { method: RequestMethod; endpoint: string }
+export type MostCalledEndpointReturnType = {
+  method: RequestMethod
+  endpoint: string
+  times: number
+}
 
 // Main Port
 export interface UserStorageService {
