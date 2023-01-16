@@ -115,15 +115,10 @@ const getTotalRequests = (current: DateNow, type: ParamsGetRequests) => {
     const transaction = dbRef.transaction(OBJECT_STORE_NAME, 'readonly')
     const objectStore = transaction.objectStore(OBJECT_STORE_NAME)
     const index = objectStore.index('sendingTime')
-    let totalRequests: number = 0
-    index.openCursor(keyRangeValue).onsuccess = (event: any) => {
-      const cursor = event.target.result as IDBCursorWithValue
-      if (cursor) {
-        totalRequests++
-        cursor.continue()
-      } else {
-        resolve(totalRequests)
-      }
+    const req = index.count(keyRangeValue)
+    req.onsuccess = () => {
+      const totalRequests = req.result as number
+      resolve(totalRequests)
     }
   })
 }
@@ -139,24 +134,21 @@ const getListTotalRequestsPerMinOfHourDB = () => {
     const transaction = dbRef.transaction(OBJECT_STORE_NAME, 'readonly')
     const objectStore = transaction.objectStore(OBJECT_STORE_NAME)
     const index = objectStore.index('sendingTime')
-    const requests: RequestSchema[] = []
+    const length = 60
+    const total = new Array<number>(length).fill(0)
 
     index.openCursor(keyRangeValue).onsuccess = (event: any) => {
       const cursor = event.target.result as IDBCursorWithValue
       if (cursor) {
-        requests.push(cursor.value)
+        const request = cursor.value as RequestSchema
+        for (let i = 0; i < length; i++) {
+          if (request.sendingTime >= now - 1000 * 60 * (i + 1)) {
+            total[length - i - 1] = total[length - i - 1] + 1
+            break
+          }
+        }
         cursor.continue()
       } else {
-        const length = 60
-        const total = new Array<number>(length).fill(0)
-        requests.forEach((request) => {
-          for (let i = 0; i < length; i++) {
-            if (request.sendingTime >= now - 1000 * 60 * (i + 1)) {
-              total[length - i - 1] = total[length - i - 1] + 1
-              break
-            }
-          }
-        })
         resolve(total)
       }
     }
@@ -174,24 +166,21 @@ const getListTotalRequestsPerHourOfDayDB = () => {
     const transaction = dbRef.transaction(OBJECT_STORE_NAME, 'readonly')
     const objectStore = transaction.objectStore(OBJECT_STORE_NAME)
     const index = objectStore.index('sendingTime')
-    const requests: RequestSchema[] = []
+    const length = 24
+    const total = new Array<number>(length).fill(0)
 
     index.openCursor(keyRangeValue).onsuccess = (event: any) => {
       const cursor = event.target.result as IDBCursorWithValue
       if (cursor) {
-        requests.push(cursor.value)
+        const request = cursor.value as RequestSchema
+        for (let i = 0; i < length; i++) {
+          if (request.sendingTime >= now - 1000 * 60 * 60 * (i + 1)) {
+            total[length - i - 1] = total[length - i - 1] + 1
+            break
+          }
+        }
         cursor.continue()
       } else {
-        const length = 24
-        const total = new Array<number>(length).fill(0)
-        requests.forEach((request) => {
-          for (let i = 0; i < length; i++) {
-            if (request.sendingTime >= now - 1000 * 60 * 60 * (i + 1)) {
-              total[length - i - 1] = total[length - i - 1] + 1
-              break
-            }
-          }
-        })
         resolve(total)
       }
     }
