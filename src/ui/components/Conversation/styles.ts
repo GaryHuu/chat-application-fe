@@ -8,6 +8,7 @@ type Styles = {
   informationName: SxProps
   avatar: SxProps
   box: SxProps
+  loading: SxProps
 }
 
 const styles: Styles = {
@@ -45,6 +46,9 @@ const styles: Styles = {
     padding: '5px 10px',
     flex: 1,
     overflowY: 'auto'
+  },
+  loading: {
+    textAlign: 'center'
   }
 }
 

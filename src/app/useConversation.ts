@@ -11,7 +11,8 @@ import useConversationDB from 'services/useConversationDB'
 import { normalizeMessage, normalizeMessages } from 'utils/helpers/function'
 
 function useConversation(conversationId: UniqueId) {
-  const { initConversationDB, addMessagesToDB, addMessageToDB } = useConversationDB(conversationId)
+  const { initConversationDB, addMessagesToDB, addMessageToDB, getMessagesDBMore } =
+    useConversationDB(conversationId)
 
   const sendMessage = async (message: MessageType) => {
     try {
@@ -58,10 +59,26 @@ function useConversation(conversationId: UniqueId) {
     return newMessagesNormalized
   }
 
+  // return limit item
   const getMessagesInDB = async () => {
-    const { messages, lastMessageId } = await initConversationDB()
+    const { messages, lastMessageId, lastCreatedAt } = await initConversationDB()
     return {
       messages,
+      lastMessageId,
+      lastCreatedAt
+    }
+  }
+
+  const getMoreMessageInDB = async (lastCreatedAt?: number, moreNumber?: number) => {
+    const {
+      messages,
+      lastCreatedAt: newLastCreatedAt,
+      lastMessageId
+    } = await getMessagesDBMore(lastCreatedAt, moreNumber)
+
+    return {
+      messages,
+      lastCreatedAt: newLastCreatedAt,
       lastMessageId
     }
   }
@@ -80,6 +97,7 @@ function useConversation(conversationId: UniqueId) {
     sendMessage,
     getMessage,
     getMessagesInDB,
+    getMoreMessageInDB,
     getConversationBasicInformation
   }
 }

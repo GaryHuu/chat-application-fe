@@ -23,6 +23,7 @@ function ConversationContainer({ conversationId }: Props) {
   const [isOpenForwardModal, setIsOpenForwardModal] = useState(false)
   const [messageSelectedForward, setMessageSelectedForward] = useState<MessageType>()
   const [data, setData] = useState<MessageType[]>([])
+  const [lastMessageCreatedAt, setLastMessageCreatedAt] = useState<DateNow>()
   const [basicInformation, setBasicInformation] = useState<Conversation>()
   const isScrollRef = useRef(false)
   const getMessageAbortController = useRef<AbortController>()
@@ -37,11 +38,13 @@ function ConversationContainer({ conversationId }: Props) {
     fetchMessages,
     getMessage,
     getMessagesInDB,
-    getConversationBasicInformation
+    getConversationBasicInformation,
+    getMoreMessageInDB
   } = useConversation(conversationId)
   const { user } = useAuthenticate()
 
   const addData = (newData: MessageType[]) => setData((prev) => [...prev, ...newData])
+  const unshiftData = (newData: MessageType[]) => setData((prev) => [...newData, ...prev])
 
   const replaceData = (id: string, newData: MessageType) => {
     setData((prev) => {
@@ -81,7 +84,8 @@ function ConversationContainer({ conversationId }: Props) {
 
   const initConversation = async () => {
     try {
-      const { messages: newMessagesDB, lastMessageId } = await getMessagesInDB()
+      const { messages: newMessagesDB, lastMessageId, lastCreatedAt } = await getMessagesInDB()
+      setLastMessageCreatedAt(lastCreatedAt)
       addData(newMessagesDB)
       isScrollRef.current = true
 
@@ -91,6 +95,13 @@ function ConversationContainer({ conversationId }: Props) {
     } catch (error) {
       console.error(error)
     }
+  }
+
+  const getMoreMessages = async () => {
+    if (!lastMessageCreatedAt) return
+    const { messages, lastCreatedAt } = await getMoreMessageInDB(lastMessageCreatedAt)
+    setLastMessageCreatedAt(lastCreatedAt)
+    unshiftData(messages)
   }
 
   const getMessageLongPolling = async () => {
@@ -191,6 +202,7 @@ function ConversationContainer({ conversationId }: Props) {
         onForwardMessage={handleSetForwardMessage}
         onSendMessage={handleSendMessage}
         onBack={handleBack}
+        getMoreMessages={getMoreMessages}
       />
       <ForwardModalContainer
         currentConversationId={conversationId}

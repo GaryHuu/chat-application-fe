@@ -6,6 +6,9 @@ import {
 } from 'utils/helpers/function'
 import { MessageSchema } from 'services/DBSchema'
 
+const CREATED_AT_MAX = 9_999_999_999_999
+const MAX_MESSAGE_MORE = 20
+
 let dbRef: IDBDatabase | null
 
 function useConversationDB(conversationId: UniqueId) {
@@ -36,34 +39,49 @@ function useConversationDB(conversationId: UniqueId) {
     addMessagesToDB([message])
   }
 
-  const getMessagesDB = () => {
+  const getMessagesDBMore = (
+    lastCreatedAt: DateNow = CREATED_AT_MAX,
+    moreNumber: number = MAX_MESSAGE_MORE
+  ) => {
     return new Promise<{
       messages: Message[]
       lastMessageId?: UniqueId
+      lastCreatedAt?: DateNow
     }>((resolve, reject) => {
       if (!dbRef) {
         reject('Database not found')
         return
       }
 
-      const request = dbRef
-        .transaction(conversationId, 'readwrite')
-        .objectStore(conversationId)
-        .getAll()
+      const transaction = dbRef.transaction(conversationId, 'readwrite')
+      const objectStore = transaction.objectStore(conversationId)
+      const index = objectStore.index('createdAt')
+      const keyRangeValue = IDBKeyRange.bound(0, lastCreatedAt - 1)
+      const messagesDB: MessageSchema[] = []
+      index.openCursor(keyRangeValue, 'prev').onsuccess = (event: any) => {
+        const cursor = event.target.result as IDBCursorWithValue
 
-      request.onsuccess = () => {
-        const messagesDB = request.result as MessageSchema[]
-        const messages = normalizeMessagesSchemaToMessages(messagesDB)
-        if (messages.length > 0) {
-          const lastMessageId = messages[messages.length - 1].id as UniqueId
-          resolve({ messages, lastMessageId })
+        if (!cursor || messagesDB.length >= moreNumber) {
+          if (messagesDB.length > 0) {
+            const lastCreatedAt = messagesDB[messagesDB.length - 1].createdAt
+            const messages = normalizeMessagesSchemaToMessages(messagesDB).reverse()
+            const lastMessageId = messages[messages.length - 1].id as UniqueId
+            resolve({
+              messages,
+              lastMessageId,
+              lastCreatedAt
+            })
+            return
+          }
+
+          resolve({ messages: [] })
         }
 
-        resolve({ messages: [] })
-      }
-
-      request.onerror = (err) => {
-        reject(`Error to get message information: ${err}`)
+        if (cursor) {
+          const message = cursor.value as MessageSchema
+          messagesDB.push(message)
+          cursor.continue()
+        }
       }
     })
   }
@@ -71,6 +89,7 @@ function useConversationDB(conversationId: UniqueId) {
   const initConversationDB = () => {
     return new Promise<{
       messages: Message[]
+      lastCreatedAt?: DateNow
       lastMessageId?: UniqueId
     }>((resolve, reject) => {
       const dbName = `${CONVERSATION_DB_NAME}_${conversationId}`
@@ -93,8 +112,8 @@ function useConversationDB(conversationId: UniqueId) {
       request.onsuccess = async (event: any) => {
         try {
           dbRef = event?.target?.result as IDBDatabase
-          const { lastMessageId, messages } = await getMessagesDB()
-          resolve({ lastMessageId, messages })
+          const { lastMessageId, messages, lastCreatedAt } = await getMessagesDBMore()
+          resolve({ lastMessageId, messages, lastCreatedAt })
         } catch (error) {
           console.error(error)
         }
@@ -105,7 +124,8 @@ function useConversationDB(conversationId: UniqueId) {
   return {
     initConversationDB,
     addMessagesToDB,
-    addMessageToDB
+    addMessageToDB,
+    getMessagesDBMore
   }
 }
 
