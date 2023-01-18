@@ -1,7 +1,5 @@
 import axios from 'axios'
-import { CLOUD_NAME_CLOUDINARY, UPLOAD_PRESET_CLOUDINARY } from 'utils/constants'
-
-const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME_CLOUDINARY}/image/upload`
+import { CLOUDINARY_URL, UPLOAD_PRESET_CLOUDINARY } from 'utils/constants'
 
 export const uploadImage = async (file: File) => {
   const formData = new FormData()
