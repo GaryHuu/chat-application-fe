@@ -31,6 +31,14 @@ function InputMessage({ onSent }: Props) {
     onSent(inputFile, 'image')
   }
 
+  const handleFocus = () => {
+    focusedRef.current = true
+  }
+
+  const handleBlur = () => {
+    focusedRef.current = false
+  }
+
   useEffect(() => {
     const enterPress = (e: KeyboardEvent) => {
       if (e.key === 'Enter' && !e.shiftKey && focusedRef.current) {
@@ -48,8 +56,7 @@ function InputMessage({ onSent }: Props) {
         sx={styles.uploadIcon}
         color="primary"
         aria-label="upload picture"
-        component="label"
-      >
+        component="label">
         <input onChange={handleSentImage} hidden accept="image/*" type="file" />
         <PhotoCamera />
       </IconButton>
@@ -60,12 +67,8 @@ function InputMessage({ onSent }: Props) {
         minRows={2}
         maxRows={3}
         value={value}
-        onFocus={() => {
-          focusedRef.current = true
-        }}
-        onBlur={() => {
-          focusedRef.current = false
-        }}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         onChange={handleChange}
       />
       <IconButton sx={styles.icon} aria-label="send" size="large" onClick={handleSubmit}>
