@@ -58,8 +58,7 @@ const styles: Styles = {
     borderRadius: '5px',
     borderTopRightRadius: '0',
     position: 'relative',
-    border: '1px solid #CCC',
-    overflow: 'hidden'
+    border: '1px solid #CCC'
   },
   triangle: {
     position: 'absolute',

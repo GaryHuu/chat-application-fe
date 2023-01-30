@@ -10,7 +10,7 @@ type Props = {
 function GroupsComponent({ groups }: Props) {
   const renderGroups = () => {
     return groups.map((group) => (
-      <Link key={group.id} to={`/conversation/${group.conversationId}`}>
+      <Link key={group.id} to={`/conversation/${group.conversationId}?type=group`}>
         <FriendCard {...group} />
       </Link>
     ))

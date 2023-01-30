@@ -10,7 +10,7 @@ type Props = {
 function FriendsComponent({ friends }: Props) {
   const renderFriends = () => {
     return friends.map((friend) => (
-      <Link key={friend.id} to={`/conversation/${friend.conversationId}`}>
+      <Link key={friend.id} to={`/conversation/${friend.conversationId}?type=personal`}>
         <FriendCard {...friend} />
       </Link>
     ))

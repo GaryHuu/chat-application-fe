@@ -83,7 +83,8 @@ function DashBoardComponent({
           width: '100%',
           maxHeight: '500px',
           marginTop: '10px'
-        }}>
+        }}
+      >
         <LineChart
           key="hour"
           data={listTotalRequestMin || []}
@@ -98,7 +99,8 @@ function DashBoardComponent({
           width: '100%',
           maxHeight: '500px',
           marginTop: '10px'
-        }}>
+        }}
+      >
         <LineChart
           key="day"
           data={listTotalRequestHour || []}

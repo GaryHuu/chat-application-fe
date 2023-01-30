@@ -1,46 +1,73 @@
+import { forwardMessage } from 'app/forwardMessage'
 import useAuthenticate from 'app/useAuthenticate'
 import useConversation from 'app/useConversation'
+import { Conversation, ConversationType } from 'domain/conversation'
 import {
   ContentMessage,
   ContentType,
   createNewMessage,
   Message as MessageType
 } from 'domain/message'
-import { checkIsBottomElement, scrollToBottomElement } from 'utils/helpers/function'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import ConversationComponent, { MESSAGES_CONTAINER_ELEMENT_ID } from 'ui/components/Conversation'
-import { forwardMessage } from 'app/forwardMessage'
-import ForwardModalContainer from 'ui/containers/ForwardModal'
+import { useEffect, useLayoutEffect, useRef, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { uploadImage } from 'services/uploadImageApi'
-import { Conversation } from 'domain/conversation'
+import ConversationComponent, { MESSAGES_CONTAINER_ELEMENT_ID } from 'ui/components/Conversation'
+import ForwardModalContainer from 'ui/containers/ForwardModal'
+import { checkIsBottomElement, scrollToBottomElement } from 'utils/helpers/function'
+import useFriends from 'ui/containers/Friends/useFriends'
+import useGroups from 'ui/containers/Groups/useGroups'
 
 type Props = {
   conversationId: string
+  type: ConversationType
 }
 
-function ConversationContainer({ conversationId }: Props) {
+function ConversationContainer({ conversationId, type }: Props) {
   const [isOpenForwardModal, setIsOpenForwardModal] = useState(false)
   const [messageSelectedForward, setMessageSelectedForward] = useState<MessageType>()
   const [data, setData] = useState<MessageType[]>([])
   const [lastMessageCreatedAt, setLastMessageCreatedAt] = useState<DateNow>()
-  const [basicInformation, setBasicInformation] = useState<Conversation>()
   const isScrollRef = useRef(false)
   const getMessageAbortController = useRef<AbortController>()
   const navigate = useNavigate()
+  const { friends } = useFriends()
+  const { groups } = useGroups()
+
+  const basicInformation: Conversation | null = useMemo(() => {
+    if (!type || !friends || !groups) {
+      return null
+    }
+
+    switch (type) {
+      case 'personal':
+        const friend = friends.find((friend) => friend.conversationId === conversationId)
+        if (friend) {
+          const { id, name, avatarURL } = friend
+          return { id, name, avatarURL }
+        }
+
+        return null
+
+      case 'group':
+        const group = groups.find((group) => group.conversationId === conversationId)
+        if (group) {
+          const { id, name, avatarURL } = group
+          return { id, name, avatarURL }
+        }
+
+        return null
+
+      default:
+        return null
+    }
+  }, [conversationId, friends, groups, type])
 
   const handleBack = () => {
     navigate(-1)
   }
 
-  const {
-    sendMessage,
-    fetchMessages,
-    getMessage,
-    getMessagesInDB,
-    getConversationBasicInformation,
-    getMoreMessageInDB
-  } = useConversation(conversationId)
+  const { sendMessage, fetchMessages, getMessage, getMessagesInDB, getMoreMessageInDB } =
+    useConversation(conversationId)
   const { user } = useAuthenticate()
 
   const addData = (newData: MessageType[]) => setData((prev) => [...prev, ...newData])
@@ -157,26 +184,12 @@ function ConversationContainer({ conversationId }: Props) {
     }
   }
 
-  const fetchConversationBasicInformation = async () => {
-    try {
-      const conversation = await getConversationBasicInformation(user.id)
-      setBasicInformation(conversation)
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   useLayoutEffect(() => {
     handleScroll()
   }, [data])
 
   useEffect(() => {
     initConversation()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    fetchConversationBasicInformation()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -196,7 +209,7 @@ function ConversationContainer({ conversationId }: Props) {
     <>
       <ConversationComponent
         user={user}
-        headerData={basicInformation}
+        headerData={basicInformation || undefined}
         data={data}
         onSendRetry={handleSendRetry}
         onForwardMessage={handleSetForwardMessage}
@@ -205,6 +218,8 @@ function ConversationContainer({ conversationId }: Props) {
         getMoreMessages={getMoreMessages}
       />
       <ForwardModalContainer
+        friends={friends}
+        groups={groups}
         currentConversationId={conversationId}
         isOpen={isOpenForwardModal}
         onClose={handleCloseForwardMessage}

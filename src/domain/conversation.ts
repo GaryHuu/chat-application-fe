@@ -6,3 +6,5 @@ export type Conversation = {
   avatarURL?: URLString
   id: UniqueId
 }
+
+export type ConversationType = 'personal' | 'group'

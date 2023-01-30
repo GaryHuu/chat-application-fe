@@ -1,19 +1,18 @@
+import { Friend } from 'domain/friend'
+import { Group } from 'domain/group'
 import { useMemo } from 'react'
 import ForwardModalComponent from 'ui/components/ForwardModal'
-import useFriends from 'ui/containers/Friends/useFriends'
-import useGroups from 'ui/containers/Groups/useGroups'
 
 type Props = {
   isOpen: boolean
   onSent: (ids: string[]) => void
   onClose: () => void
   currentConversationId: string
+  friends: Friend[]
+  groups: Group[]
 }
 
-function ForwardModalContainer({ currentConversationId, ...otherProps }: Props) {
-  const { friends } = useFriends()
-  const { groups } = useGroups()
-
+function ForwardModalContainer({ currentConversationId, friends, groups, ...otherProps }: Props) {
   const _friends = useMemo(
     () => friends?.filter((friend) => friend.conversationId !== currentConversationId),
     [currentConversationId, friends]
