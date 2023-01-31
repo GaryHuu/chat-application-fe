@@ -42,14 +42,14 @@ export const convertFileToBase64 = (file: File): Promise<string> => {
 
 export const normalizeMessages = (messages: Message[]): Message[] => {
   return messages.map((message) => {
-    const { content, createdAt, fromUserId, id, status = 'sent', type, user } = message
-    return { content, createdAt, fromUserId, id, status, type, user }
+    const { content, createdAt, fromUserId, id, status = 'sent', type } = message
+    return { content, createdAt, fromUserId, id, status, type }
   })
 }
 
 export const normalizeMessage = (message: Message): Message => {
-  const { content, createdAt, fromUserId, id, status, type, user } = message
-  return { content, createdAt, fromUserId, id, status, type, user }
+  const { content, createdAt, fromUserId, id, status, type } = message
+  return { content, createdAt, fromUserId, id, status, type }
 }
 
 export const normalizeMessagesToMessagesSchema = (messages: Message[]): MessageSchema[] => {

@@ -1,5 +1,5 @@
 import { currentDatetime } from 'lib/datetime'
-import { User, UserName } from './user'
+import { User } from './user'
 
 export type ContentMessage = string
 export type MessageStatus = 'sending' | 'sent' | 'error'
@@ -12,11 +12,6 @@ export type Message = {
   content: ContentMessage
   createdAt: DateTimeString
   type: ContentType
-  user: {
-    name: UserName
-    id: UniqueId
-    avatarURL?: URLString
-  }
 }
 
 export function checkIsOwnerMessage(user: User, message: Message): boolean {
@@ -34,12 +29,7 @@ export function createNewMessage(
     status: 'sending',
     type,
     content,
-    createdAt: currentDatetime(),
-    user: {
-      name: user.name,
-      id: user.id,
-      avatarURL: user?.avatarURL
-    }
+    createdAt: currentDatetime()
   }
   return newMessage
 }

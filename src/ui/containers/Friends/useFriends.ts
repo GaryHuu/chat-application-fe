@@ -5,7 +5,6 @@ import userApi from 'services/userApi'
 function useFriends() {
   const { friends, updateFriends } = useFriendsStorage()
   const { user } = useUserStorage()
-  
   const fetchFriends = async () => {
     try {
       const friendsResponse = await userApi.getFriends(user.id)

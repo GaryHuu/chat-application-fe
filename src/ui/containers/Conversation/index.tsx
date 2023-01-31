@@ -2,36 +2,40 @@ import { forwardMessage } from 'app/forwardMessage'
 import useAuthenticate from 'app/useAuthenticate'
 import useConversation from 'app/useConversation'
 import { Conversation, ConversationType } from 'domain/conversation'
-import {
-  ContentMessage,
-  ContentType,
-  createNewMessage,
-  Message as MessageType
-} from 'domain/message'
-import { useEffect, useLayoutEffect, useRef, useState, useMemo } from 'react'
+import { Friend } from 'domain/friend'
+import { Group } from 'domain/group'
+import { ContentMessage, ContentType, createNewMessage, Message } from 'domain/message'
+import { UserName } from 'domain/user'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { uploadImage } from 'services/uploadImageApi'
 import ConversationComponent, { MESSAGES_CONTAINER_ELEMENT_ID } from 'ui/components/Conversation'
 import ForwardModalContainer from 'ui/containers/ForwardModal'
 import { checkIsBottomElement, scrollToBottomElement } from 'utils/helpers/function'
-import useFriends from 'ui/containers/Friends/useFriends'
-import useGroups from 'ui/containers/Groups/useGroups'
+
+export type MessageType = Message & {
+  user: {
+    name: UserName
+    id: UniqueId
+    avatarURL?: URLString
+  }
+}
 
 type Props = {
   conversationId: string
   type: ConversationType
+  friends: Friend[]
+  groups: Group[]
 }
 
-function ConversationContainer({ conversationId, type }: Props) {
+function ConversationContainer({ conversationId, type, friends, groups }: Props) {
   const [isOpenForwardModal, setIsOpenForwardModal] = useState(false)
-  const [messageSelectedForward, setMessageSelectedForward] = useState<MessageType>()
+  const [messageSelectedForward, setMessageSelectedForward] = useState<Message>()
   const [data, setData] = useState<MessageType[]>([])
   const [lastMessageCreatedAt, setLastMessageCreatedAt] = useState<DateNow>()
   const isScrollRef = useRef(false)
   const getMessageAbortController = useRef<AbortController>()
   const navigate = useNavigate()
-  const { friends } = useFriends()
-  const { groups } = useGroups()
 
   const basicInformation: Conversation | null = useMemo(() => {
     if (!type || !friends || !groups) {
@@ -81,22 +85,74 @@ function ConversationContainer({ conversationId, type }: Props) {
     })
   }
 
+  const addFromUserData = (message: Message): MessageType | null => {
+    if (!type || !friends || !groups) {
+      return null
+    }
+
+    const isOwner = message.fromUserId === user.id
+    if (isOwner) {
+      return {
+        ...message,
+        user: { ...user }
+      }
+    }
+
+    switch (type) {
+      case 'personal':
+        const user = friends.find((friend) => friend.id === message.fromUserId)
+        if (user) {
+          const { id, name, avatarURL } = user
+          return {
+            ...message,
+            user: { id, name, avatarURL }
+          }
+        }
+        return null
+
+      case 'group':
+        const group = groups.find((group) => group.conversationId === conversationId)
+        if (group) {
+          const { users } = group
+          const user = users.find((user) => user.id === message.fromUserId)
+          if (user) {
+            const { id, name, avatarURL } = user
+            return {
+              ...message,
+              user: { id, name, avatarURL }
+            }
+          }
+        }
+
+        return null
+
+      default:
+        return null
+    }
+  }
+
   const handleSendMessage = async (value: ContentMessage | File, type: ContentType) => {
-    let newMessage: MessageType
+    let newMessage: Message
 
     if (type === 'image' && typeof value === 'object') {
       const url = await uploadImage(value)
       newMessage = createNewMessage(user, url, 'image')
-      addData([newMessage])
-      isScrollRef.current = true
     } else {
       newMessage = createNewMessage(user, value as string)
-      addData([newMessage])
+    }
+
+    const newMessageData = addFromUserData(newMessage)
+    if (newMessageData) {
+      addData([newMessageData])
       isScrollRef.current = true
     }
 
     const newMessageResponse = await sendMessage(newMessage)
-    replaceData(newMessage.id, newMessageResponse)
+    const messageSent = addFromUserData(newMessageResponse)
+
+    if (messageSent) {
+      replaceData(newMessage.id, messageSent)
+    }
   }
 
   const handleSendRetry = async (message: MessageType) => {
@@ -106,18 +162,36 @@ function ConversationContainer({ conversationId, type }: Props) {
     isScrollRef.current = true
 
     const newMessageResponse = await sendMessage(newMessage)
-    replaceData(message.id, newMessageResponse)
+    const messageSent = addFromUserData(newMessageResponse)
+
+    if (messageSent) {
+      replaceData(newMessage.id, messageSent)
+    }
   }
 
   const initConversation = async () => {
     try {
       const { messages: newMessagesDB, lastMessageId, lastCreatedAt } = await getMessagesInDB()
+      const newMessages: MessageType[] = []
+      for (const message of newMessagesDB) {
+        const newMessage = addFromUserData(message)
+        if (newMessage) {
+          newMessages.push(newMessage)
+        }
+      }
       setLastMessageCreatedAt(lastCreatedAt)
-      addData(newMessagesDB)
+      addData(newMessages)
       isScrollRef.current = true
 
-      const newMessages = await fetchMessages(lastMessageId)
-      addData(newMessages)
+      const newMessagesFetched = await fetchMessages(lastMessageId)
+      const newMessagesFromFetch: MessageType[] = []
+      for (const message of newMessagesFetched) {
+        const newMessage = addFromUserData(message)
+        if (newMessage) {
+          newMessagesFromFetch.push(newMessage)
+        }
+      }
+      addData(newMessagesFromFetch)
       isScrollRef.current = true
     } catch (error) {
       console.error(error)
@@ -127,23 +201,31 @@ function ConversationContainer({ conversationId, type }: Props) {
   const getMoreMessages = async () => {
     if (!lastMessageCreatedAt) return
     const { messages, lastCreatedAt } = await getMoreMessageInDB(lastMessageCreatedAt)
+    const newMessages: MessageType[] = []
+    for (const message of messages) {
+      const newMessage = addFromUserData(message)
+      if (newMessage) {
+        newMessages.push(newMessage)
+      }
+    }
     setLastMessageCreatedAt(lastCreatedAt)
-    unshiftData(messages)
+    unshiftData(newMessages)
   }
 
   const getMessageLongPolling = async () => {
     try {
       getMessageAbortController.current = new AbortController()
       const newMessage = await getMessage(user, getMessageAbortController.current)
+      const message = addFromUserData(newMessage)
       const isAborted = getMessageAbortController?.current?.signal.aborted
-      if (!isAborted) {
+      if (!isAborted && message) {
         const isBottom = checkIsBottomElement(MESSAGES_CONTAINER_ELEMENT_ID)
         if (isBottom) {
           isScrollRef.current = true
         } else {
           isScrollRef.current = false
         }
-        addData([newMessage])
+        addData([message])
       }
     } catch (error) {
       console.error(error)
@@ -177,8 +259,8 @@ function ConversationContainer({ conversationId, type }: Props) {
     setMessageSelectedForward(undefined)
   }
 
-  const handleScroll = () => {
-    if (isScrollRef.current) {
+  const handleScroll = (priority = false) => {
+    if (isScrollRef.current || priority) {
       isScrollRef.current = false
       scrollToBottomElement(MESSAGES_CONTAINER_ELEMENT_ID)
     }
@@ -216,6 +298,7 @@ function ConversationContainer({ conversationId, type }: Props) {
         onSendMessage={handleSendMessage}
         onBack={handleBack}
         getMoreMessages={getMoreMessages}
+        onScrollDown={() => handleScroll(true)}
       />
       <ForwardModalContainer
         friends={friends}

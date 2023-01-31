@@ -117,7 +117,7 @@ function ForwardModalComponent({ friends, groups, isOpen, onClose, onSent }: Pro
             onClick={handleSubmit}
             variant="contained"
           >
-            Sent
+            Send
           </Button>
         </Box>
       </Box>
