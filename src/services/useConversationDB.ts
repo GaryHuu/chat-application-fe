@@ -6,6 +6,7 @@ import {
 } from 'utils/helpers/function'
 import { MessageSchema } from 'services/DBSchema'
 
+const OBJECT_STORE_NAME = 'messages'
 const CREATED_AT_MAX = 9_999_999_999_999
 const MAX_MESSAGE_MORE = 20
 
@@ -18,10 +19,10 @@ function useConversationDB(conversationId: UniqueId) {
       return
     }
 
-    const transaction = dbRef.transaction(conversationId, 'readwrite')
-    const objectStore = transaction.objectStore(conversationId)
+    const transaction = dbRef.transaction(OBJECT_STORE_NAME, 'readwrite')
+    const objectStore = transaction.objectStore(OBJECT_STORE_NAME)
 
-    const messageDB = normalizeMessagesToMessagesSchema(messages)
+    const messageDB = normalizeMessagesToMessagesSchema(messages, conversationId)
 
     messageDB.forEach((message) => {
       const request = objectStore.add(message)
@@ -53,10 +54,13 @@ function useConversationDB(conversationId: UniqueId) {
         return
       }
 
-      const transaction = dbRef.transaction(conversationId, 'readwrite')
-      const objectStore = transaction.objectStore(conversationId)
-      const index = objectStore.index('createdAt')
-      const keyRangeValue = IDBKeyRange.bound(0, lastCreatedAt - 1)
+      const transaction = dbRef.transaction(OBJECT_STORE_NAME, 'readwrite')
+      const objectStore = transaction.objectStore(OBJECT_STORE_NAME)
+      const index = objectStore.index('toConversationId_createdAt')
+      const keyRangeValue = IDBKeyRange.bound(
+        [conversationId, 0],
+        [conversationId, lastCreatedAt - 1]
+      )
       const messagesDB: MessageSchema[] = []
       index.openCursor(keyRangeValue, 'prev').onsuccess = (event: any) => {
         const cursor = event.target.result as IDBCursorWithValue
@@ -92,7 +96,7 @@ function useConversationDB(conversationId: UniqueId) {
       lastCreatedAt?: DateNow
       lastMessageId?: UniqueId
     }>((resolve, reject) => {
-      const dbName = `${CONVERSATION_DB_NAME}_${conversationId}`
+      const dbName = `${CONVERSATION_DB_NAME}`
       const request: IDBOpenDBRequest = indexedDB.open(dbName, 1)
 
       request.onerror = () => {
@@ -101,12 +105,12 @@ function useConversationDB(conversationId: UniqueId) {
 
       request.onupgradeneeded = (event: any) => {
         dbRef = event?.target?.result as IDBDatabase
-        const objectStore = dbRef.createObjectStore(conversationId, {
+        const objectStore = dbRef.createObjectStore(OBJECT_STORE_NAME, {
           keyPath: 'id'
         })
-        objectStore.createIndex('id', 'id', { unique: true })
-        objectStore.createIndex('createdAt', 'createdAt', { unique: false })
-        objectStore.createIndex('content', 'content', { unique: false })
+        objectStore.createIndex('toConversationId_createdAt', ['toConversationId', 'createdAt'], {
+          unique: false
+        })
       }
 
       request.onsuccess = async (event: any) => {

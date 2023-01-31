@@ -6,6 +6,7 @@ export type RequestSchema = RequestType & {}
 export type MessageSchema = {
   id: UniqueId
   fromUserId: UniqueId
+  toConversationId: UniqueId
   status: MessageStatus
   content: ContentMessage
   createdAt: DateNow

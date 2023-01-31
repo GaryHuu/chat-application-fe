@@ -52,10 +52,14 @@ export const normalizeMessage = (message: Message): Message => {
   return { content, createdAt, fromUserId, id, status, type }
 }
 
-export const normalizeMessagesToMessagesSchema = (messages: Message[]): MessageSchema[] => {
+export const normalizeMessagesToMessagesSchema = (
+  messages: Message[],
+  toConversationId: UniqueId
+): MessageSchema[] => {
   return messages.map((message) => {
     return {
       ...message,
+      toConversationId,
       content: encryptData(message.content),
       createdAt: new Date(message.createdAt).getTime()
     }
