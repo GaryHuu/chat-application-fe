@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
 
-import { getTheMostCalledEndpointMin, getTotalRequestsPerMin } from 'app/requestStatistic'
+import { getTheMostCalledEndpointMin } from 'app/requestStatistic'
 import { initDB as initRequestTrackingDB } from 'services/requestTrackingDB'
 import { MAX_REQUEST_PER_MIN_WARN, START_TRACKING_WORKER_HANDLER_CODE } from 'utils/constants'
 
@@ -9,10 +9,10 @@ const main = () => {
 
   setInterval(async () => {
     try {
-      const { total } = await getTotalRequestsPerMin()
-      if (total >= MAX_REQUEST_PER_MIN_WARN) {
-        const value = await getTheMostCalledEndpointMin()
-        const messageWarning = `${value?.method.toUpperCase()} ${value?.endpoint}`
+      const value = await getTheMostCalledEndpointMin()
+      if (!value) return
+      if (value?.times >= MAX_REQUEST_PER_MIN_WARN) {
+        const messageWarning = `${value?.method.toUpperCase()} ${value?.endpoint} x${value?.times} times`
         self.postMessage(messageWarning)
       }
     } catch (error) {
