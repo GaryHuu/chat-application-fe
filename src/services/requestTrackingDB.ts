@@ -1,4 +1,8 @@
-import { MostCalledEndpointReturnType, ParamsGetRequests } from 'app/ports'
+import {
+  MostCalledEndpointReturnType,
+  ObjectCalledEndpointReturnType,
+  ParamsGetRequests
+} from 'app/ports'
 import { RequestMethod } from 'domain/request'
 import { RequestSchema } from 'services/DBSchema'
 
@@ -52,7 +56,6 @@ const addRequestsToDB = (requestsData: RequestSchema[]) => {
 
     request.onsuccess = () => {}
     request.onerror = (err) => {
-      console.log(request.error)
       console.error(`Error to add new request: ${err}`)
     }
   })
@@ -257,6 +260,56 @@ const getTheMostCalledEndpointDB = (current: DateNow, type: ParamsGetRequests) =
   })
 }
 
+const getObjectCalledEndpointDB = (current: DateNow, type: ParamsGetRequests) => {
+  return new Promise<ObjectCalledEndpointReturnType | null>((resolve, reject) => {
+    if (!dbRef) {
+      reject('Database not found')
+      return
+    }
+
+    let prev = current
+    switch (type) {
+      case 'minute':
+        prev = current - 1000 * 60
+        break
+      case 'hour':
+        prev = current - 1000 * 60 * 60
+        break
+      case 'day':
+        prev = current - 1000 * 60 * 60 * 24
+        break
+
+      default:
+        break
+    }
+
+    const keyRangeValue = IDBKeyRange.bound(prev, current, true, false)
+    const transaction = dbRef.transaction(OBJECT_STORE_NAME, 'readonly')
+    const objectStore = transaction.objectStore(OBJECT_STORE_NAME)
+    const index = objectStore.index('sendingTime')
+    const map: ObjectCalledEndpointReturnType = {}
+    const requests: RequestSchema[] = []
+    index.openCursor(keyRangeValue).onsuccess = (event: any) => {
+      const cursor = event.target.result as IDBCursorWithValue
+      if (cursor) {
+        const value = cursor.value as RequestSchema
+        requests.push(value)
+        if (map[value.endpoint]) {
+          map[value.endpoint].times = map[value.endpoint].times + 1
+        } else {
+          map[value.endpoint] = {
+            times: 1,
+            method: value.method
+          }
+        }
+        cursor.continue()
+      } else {
+        resolve(map as ObjectCalledEndpointReturnType)
+      }
+    }
+  })
+}
+
 export {
   initDB,
   getRequestsDB,
@@ -265,5 +318,6 @@ export {
   getTotalRequests,
   getListTotalRequestsPerMinOfHourDB,
   getListTotalRequestsPerHourOfDayDB,
-  getTheMostCalledEndpointDB
+  getTheMostCalledEndpointDB,
+  getObjectCalledEndpointDB
 }

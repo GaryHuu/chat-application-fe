@@ -43,25 +43,29 @@ export const convertFileToBase64 = (file: File): Promise<string> => {
 export const normalizeMessages = (messages: Message[]): Message[] => {
   return messages.map((message) => {
     const { content, createdAt, fromUserId, id, status = 'sent', type } = message
-    return { content, createdAt, fromUserId, id, status, type }
+    return { createdAt, fromUserId, id, status, type, content: decryptData(content) }
   })
 }
 
 export const normalizeMessage = (message: Message): Message => {
   const { content, createdAt, fromUserId, id, status, type } = message
-  return { content, createdAt, fromUserId, id, status, type }
+  return { createdAt, fromUserId, id, status, type, content: decryptData(content) }
 }
 
 export const normalizeMessagesToMessagesSchema = (
   messages: Message[],
   toConversationId: UniqueId
 ): MessageSchema[] => {
-  return messages.map((message) => {
+  return messages.map(({ content, createdAt, fromUserId, id, status = 'sent', type }) => {
     return {
-      ...message,
+      content,
+      fromUserId,
+      id,
+      status,
+      type,
       toConversationId,
-      content: encryptData(message.content),
-      createdAt: new Date(message.createdAt).getTime()
+      // content: encryptData(message.content),
+      createdAt: new Date(createdAt).getTime()
     }
   })
 }

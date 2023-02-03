@@ -23,7 +23,7 @@ root.render(
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
-        limit={1}
+        limit={10}
         rtl={false}
         pauseOnFocusLoss
         draggable

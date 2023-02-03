@@ -1,6 +1,7 @@
 import {
   getListTotalRequestsPerHourOfDayDB,
   getListTotalRequestsPerMinOfHourDB,
+  getObjectCalledEndpointDB,
   getTheMostCalledEndpointDB,
   getTotalRequests
 } from 'services/requestTrackingDB'
@@ -82,5 +83,23 @@ export const getTheMostCalledEndpointHour = async () => {
 export const getTheMostCalledEndpointDay = async () => {
   const now = Date.now()
   const value = await getTheMostCalledEndpointDB(now, 'day')
+  return value
+}
+
+export const getObjectTimesEndpointCalledMin = async () => {
+  const now = Date.now()
+  const value = await getObjectCalledEndpointDB(now, 'minute')
+  return value
+}
+
+export const getObjectTimesEndpointCalledHour = async () => {
+  const now = Date.now()
+  const value = await getObjectCalledEndpointDB(now, 'hour')
+  return value
+}
+
+export const getObjectTimesEndpointCalledDay = async () => {
+  const now = Date.now()
+  const value = await getObjectCalledEndpointDB(now, 'day')
   return value
 }

@@ -7,3 +7,5 @@ export const CLOUDINARY_URL = process.env.REACT_APP_CLOUDINARY_URL as string
 export const SECRET_KEY_ENCRYPT = process.env.REACT_APP_SECRET_KEY_ENCRYPT as string
 export const START_TRACKING_WORKER_HANDLER_CODE = 'START'
 export const MAX_REQUEST_PER_MIN_WARN = 40
+export const MAX_REQUEST_PER_HOUR_WARN = 40 * 60
+export const MAX_REQUEST_PER_DAY_WARN = 40 * 60 * 24

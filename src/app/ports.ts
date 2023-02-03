@@ -45,6 +45,13 @@ export type MostCalledEndpointReturnType = {
   times: number
 }
 
+export type ObjectCalledEndpointReturnType = {
+  [key: string]: {
+    times: number
+    method: string
+  }
+}
+
 // Main Port
 export interface UserStorageService {
   user: User
